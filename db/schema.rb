@@ -20,9 +20,9 @@ ActiveRecord::Schema.define(version: 20150211131503) do
     t.text    "description"
     t.string  "student"
     t.string  "level"
+    t.string  "subject"
     t.string  "semester"
     t.integer "year"
-    t.string  "subject"
     t.string  "teacher"
   end
 

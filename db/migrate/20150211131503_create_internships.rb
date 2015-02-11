@@ -7,6 +7,7 @@ class CreateInternships < ActiveRecord::Migration
       t.text :description
       t.string :student
       t.string :level
+      t.string :subject
       t.string :semester
       t.integer :year
       t.string :teacher
