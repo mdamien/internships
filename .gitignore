@@ -34,8 +34,7 @@ config/secrets.yml
 *.bowerrc
 bower.json
 
-# OS generated files #
-######################
+# OS generated files
 .DS_Store
 .DS_Store?
 ._*
@@ -46,3 +45,6 @@ Thumbs.db
 
 # Data files
 stages.csv
+
+# User-specific files
+.idea/
