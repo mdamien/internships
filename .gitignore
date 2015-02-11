@@ -43,3 +43,6 @@ bower.json
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Data files
+stages.csv
