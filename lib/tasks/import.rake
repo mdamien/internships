@@ -7,10 +7,13 @@ namespace :app do
     args.with_defaults(limit: -1)
     file = args[:file]
     limit = args[:limit]
+    
+    Internship.delete_all
+    
     CSV.foreach(file, :headers => true) do |row, i|
       #Data are this way: Automne 2015 => 2015A. We are separating year and semester
-      semester = row[7].last(1)
-      semesterYear = row[7][0..-1]
+      semester = row[7].split('').last
+      semester_year = row[7][0..-1]
   
       Internship.create({
         id: row[0],
@@ -21,7 +24,7 @@ namespace :app do
         student: row[5],
         level: row[6],
         semester: semester,
-        year: semesterYear,
+        year: semester_year,
         subject: row[8],
         teacher: row[9]
       })
