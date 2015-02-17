@@ -6,6 +6,7 @@ namespace :app do
   task :import, [:file, :limit] => [:environment] do |t,args|
     args.with_defaults(limit: -1)
     file = args[:file]
+    limit = args[:limit]
     CSV.foreach(file, :headers => true) do |row, i|
       #Data are this way: Automne 2015 => 2015A. We are separating year and semester
       semester = row[7].last(1)

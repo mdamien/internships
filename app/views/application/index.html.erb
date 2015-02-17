@@ -1,0 +1,18 @@
+<h1>Stages</h1>
+<table class="table table-condensed table-hover table-bordered table-striped">
+<thead>
+      <tr>
+        <th>Subject</th>
+        <th>Company</th>
+        <th>Year</th>
+      </tr>
+    </thead>
+<% @internships.first(100).each do |internship| %>
+  <tr>
+      <td><a href="internships/<%= internship.id %>"><%= internship.subject %></a></td>
+      <td><%= internship.company %></td>
+      <td><%= internship.year %></td>
+   </tr>
+<% end %>
+</table>
+

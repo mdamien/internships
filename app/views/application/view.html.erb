@@ -1,0 +1,13 @@
+<h1><%= @internship.subject %></h1>
+<pre>
+<%= JSON.pretty_generate(@internship.as_json) %>
+</pre>
+
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//stagesutc.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
