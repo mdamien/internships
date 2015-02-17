@@ -7,7 +7,7 @@
         <th>Year</th>
       </tr>
     </thead>
-<% @internships.first(100).each do |internship| %>
+<% @internships.each do |internship| %>
   <tr>
       <td><a href="internships/<%= internship.id %>"><%= internship.subject %></a></td>
       <td><%= internship.company %></td>
