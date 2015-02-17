@@ -1,4 +1,5 @@
 # Ignore all logfiles and tempfiles.
+.c9
 /log/*
 !/log/.keep
 /tmp
