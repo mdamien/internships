@@ -1,4 +1,5 @@
 require 'csv'
+
 namespace :app do
   desc "Import internships from csv file"
   
