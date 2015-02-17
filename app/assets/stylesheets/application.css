@@ -14,3 +14,12 @@
  *= require_self
  *= require bootstrap_paper
  */
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+body {
+    margin-bottom: 90px;
+    margin-top: 60px;
+}
