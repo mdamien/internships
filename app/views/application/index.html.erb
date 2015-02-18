@@ -14,10 +14,10 @@
       </tr>
       </thead>
       <% @internships.each do |internship| %>
-          <tr>
+          <tr internship-id="<%= internship.id %>">
             <!-- Different color for spring and autumn semesters -->
             <td <% if internship.semester == 'A' %>class="text-success"<% end %>><%= internship.semester %><%= internship.year %></td>
-            <td><a href="internships/<%= internship.id %>"><%= internship.subject %></a></td>
+            <td><a href="application/<%= internship.id %>"><%= internship.subject %></a></td>
             <td><%= internship.company %></td>
             <td>Villeville</td>
             <td><%= internship.country %></td>
@@ -27,26 +27,22 @@
   </div>
 
   <div class="col-md-3 hidden-sm" id="panel-container">
-    <div class="panel panel-primary" data-spy="affix" data-offset-top="80" id="internship-info">
+    <div class="panel panel-success" data-spy="affix" data-offset-top="80" id="internship-info">
       <div class="panel-heading">
-        <h3 class="panel-title">Panel heading which will contain the subject of the internship!</h3>
+        <h3 class="panel-title">Sujet</h3>
       </div>
       <div class="panel-body">
-        Panel content, will contain the description.
-        <br/>
-        Will contain name of student.
-        <br/>
-        Etc.
+        Description du stage
       </div>
   </div>
 </div>
 
 <script type="text/javascript">
 $(document).ready(function() {
-    var $affixElement = $('#internship-info');
+    var $internshipInfoPanel = $('#internship-info');
 
     function resizeInternshipPanelInformation() {
-        $affixElement.width($affixElement.parent().width());
+        $internshipInfoPanel.width($internshipInfoPanel.parent().width());
     }
 
     //Setting panel size when page is loaded.
@@ -54,8 +50,28 @@ $(document).ready(function() {
 
     //Resizing panel width when size of the window changes.
     $(window).resize(function () {
-        resizeInternshipPanelInformation()
+        resizeInternshipPanelInformation();
     });
 
+    $('tr[internship-id]').click(function(){
+        var id = $(this).attr('internship-id');
+
+        //Retrieving data of the clicked row
+        $.ajax({
+            url: "/internships/" + id,
+            type: "GET",
+            dataType: "json"
+        }).done(function(data){
+            $internshipInfoPanel.find('.panel-title').text(data.subject)
+            updateInfoPanelContents(data);
+        });
+    });
+
+    /*
+    Update contents of internship information panel based on information retrieved from server
+     */
+    function updateInfoPanelContents(data){
+        $internshipInfoPanel.find('.panel-body').text(data.description)
+    }
 });
 </script>

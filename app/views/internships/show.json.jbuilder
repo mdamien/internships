@@ -1,0 +1,1 @@
+json.extract! @internship, :id, :subject, :description, :student, :branch
