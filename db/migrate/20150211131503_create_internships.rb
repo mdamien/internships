@@ -11,6 +11,9 @@ class CreateInternships < ActiveRecord::Migration
       t.string :semester
       t.integer :year
       t.string :teacher
+      t.integer :zipcode
+      t.string :city
+      t.string :country
     end
   end
 end

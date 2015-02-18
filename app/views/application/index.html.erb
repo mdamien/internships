@@ -1,18 +1,22 @@
-<h1>Stages</h1>
-<table class="table table-condensed table-hover table-striped">
-<thead>
+    <h1>Stages</h1>
+    <table class="table table-condensed table-hover table-striped">
+    <thead>
       <tr>
-        <th>Subject</th>
-        <th>Company</th>
-        <th>Year</th>
+        <th>Semestre</th>
+        <th>Sujet</th>
+        <th>Entreprise</th>
+        <th>Ville</th>
+        <th>Pays</th>
       </tr>
     </thead>
-<% @internships.each do |internship| %>
-  <tr>
-      <td><a href="internships/<%= internship.id %>"><%= internship.subject %></a></td>
-      <td><%= internship.company %></td>
-      <td><%= internship.year %></td>
-   </tr>
-<% end %>
-</table>
-
+    <% @internships.each do |internship| %>
+      <tr>
+        <!-- Different color for spring and autumn semesters -->
+        <td <% if internship.semester == 'A' %>class="text-success"<% end %>><%= internship.semester %><%= internship.year %></td>
+        <td><a href="internships/<%= internship.id %>"><%= internship.subject %></a></td>
+        <td><%= internship.company %></td>
+        <td>Villeville</td>
+        <td><%= internship.country %></td>
+       </tr>
+    <% end %>
+    </table>

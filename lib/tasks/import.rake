@@ -7,14 +7,16 @@ namespace :app do
     args.with_defaults(limit: -1)
     file = args[:file]
     limit = args[:limit]
-    
+
     Internship.delete_all
     
     CSV.foreach(file, :headers => true) do |row, i|
       #Data are this way: Automne 2015 => 2015A. We are separating year and semester
       semester = row[7].split('').last
       semester_year = row[7][0..-1]
-  
+
+      country = row[1].split("\n").last
+
       Internship.create({
         id: row[0],
         address: row[1],
@@ -26,9 +28,10 @@ namespace :app do
         semester: semester,
         year: semester_year,
         subject: row[8],
-        teacher: row[9]
+        teacher: row[9],
+        country: country
       })
-      
+
       if i == limit
         break
       end
