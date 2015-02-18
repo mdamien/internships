@@ -1,6 +1,10 @@
-    <h1>Stages</h1>
+<h3>Bienvenue sur l'interface de consultation des stages effectués à l'UTC.</h3>
+<p>Vous pouvez utiliser les filtres mis à votre disposition pour rechercher des stages correspondant à votre profil.</p>
+
+<div class="row">
+  <div class="col-md-9">
     <table class="table table-condensed table-hover table-striped">
-    <thead>
+      <thead>
       <tr>
         <th>Semestre</th>
         <th>Sujet</th>
@@ -8,15 +12,50 @@
         <th>Ville</th>
         <th>Pays</th>
       </tr>
-    </thead>
-    <% @internships.each do |internship| %>
-      <tr>
-        <!-- Different color for spring and autumn semesters -->
-        <td <% if internship.semester == 'A' %>class="text-success"<% end %>><%= internship.semester %><%= internship.year %></td>
-        <td><a href="internships/<%= internship.id %>"><%= internship.subject %></a></td>
-        <td><%= internship.company %></td>
-        <td>Villeville</td>
-        <td><%= internship.country %></td>
-       </tr>
-    <% end %>
+      </thead>
+      <% @internships.each do |internship| %>
+          <tr>
+            <!-- Different color for spring and autumn semesters -->
+            <td <% if internship.semester == 'A' %>class="text-success"<% end %>><%= internship.semester %><%= internship.year %></td>
+            <td><a href="internships/<%= internship.id %>"><%= internship.subject %></a></td>
+            <td><%= internship.company %></td>
+            <td>Villeville</td>
+            <td><%= internship.country %></td>
+          </tr>
+      <% end %>
     </table>
+  </div>
+
+  <div class="col-md-3 hidden-sm" id="panel-container">
+    <div class="panel panel-primary" data-spy="affix" data-offset-top="80" id="internship-info">
+      <div class="panel-heading">
+        <h3 class="panel-title">Panel heading which will contain the subject of the internship!</h3>
+      </div>
+      <div class="panel-body">
+        Panel content, will contain the description.
+        <br/>
+        Will contain name of student.
+        <br/>
+        Etc.
+      </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    var $affixElement = $('#internship-info');
+
+    function resizeInternshipPanelInformation() {
+        $affixElement.width($affixElement.parent().width());
+    }
+
+    //Setting panel size when page is loaded.
+    resizeInternshipPanelInformation()
+
+    //Resizing panel width when size of the window changes.
+    $(window).resize(function () {
+        resizeInternshipPanelInformation()
+    });
+
+});
+</script>
