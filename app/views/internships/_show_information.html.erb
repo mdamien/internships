@@ -3,4 +3,4 @@
 <strong>Étudiant</strong>
 <p><%= internship.student %></p>
 <strong>Descriptif</strong>
-<p><%= internship.description %></p>
+<p><%= simple_format(internship.description, {}, sanitize: true) %></p>
