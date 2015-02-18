@@ -71,7 +71,7 @@ $(document).ready(function() {
     Update contents of internship information panel based on information retrieved from server
      */
     function updateInfoPanelContents(data){
-        $internshipInfoPanel.find('.panel-body').text(data.description)
+        $internshipInfoPanel.find('.panel-body').html(data.description)
     }
 });
 </script>

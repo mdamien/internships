@@ -1,1 +1,2 @@
-json.extract! @internship, :id, :subject, :description, :student, :branch
+json.(@internship, :subject)
+json.description render 'internships/show_information', internship: @internship
