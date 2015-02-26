@@ -1,4 +1,6 @@
-<h1><%= @internship.subject %></h1>
-<pre>
-<%= JSON.pretty_generate(@internship.as_json) %>
-</pre>
+<div class="container">
+    <h1><%= @internship.subject %></h1>
+    <pre>
+        <%= JSON.pretty_generate(@internship.as_json) %>
+    </pre>
+</div>
