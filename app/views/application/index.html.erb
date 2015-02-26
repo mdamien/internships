@@ -3,7 +3,7 @@
 
 <div class="row">
   <div class="col-md-9">
-    <table class="table table-condensed table-hover table-striped">
+    <table class="table table-condensed table-hover ">
       <thead>
       <tr>
         <th>Semestre</th>
@@ -68,10 +68,15 @@ $(document).ready(function() {
     });
 
     /*
-    Update contents of internship information panel based on information retrieved from server
+    Update contents of internship information panel based on information retrieved from server.
      */
     function updateInfoPanelContents(data){
         $internshipInfoPanel.find('.panel-body').html(data.description)
     }
+
+    // When row is click: highlight it. Other rows should not be highlighted.
+    $('table').on('click', 'tbody tr', function(event) {
+        $(this).addClass('success').siblings().removeClass('success');
+    });
 });
 </script>
