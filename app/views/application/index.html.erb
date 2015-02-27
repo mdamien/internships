@@ -13,14 +13,21 @@
         <th>Pays</th>
       </tr>
       </thead>
+      <tr>
+        <td></td>
+        <td><input type="text" class="form-control subject" placeholder="Sujet" autocomplete="off"/></td>
+        <td><input type="text" class="form-control company" placeholder="Entreprise" autocomplete="off"/></td>
+        <td><input type="text" class="form-control city" placeholder="Ville" autocomplete="off"/></td>
+        <td><input type="text" class="form-control country" placeholder="Pays" autocomplete="off"/></td>
+      </tr>
       <% @internships.each do |internship| %>
           <tr internship-id="<%= internship.id %>">
             <!-- Different color for spring and autumn semesters -->
             <td <% if internship.semester == 'A' %>class="text-success"<% end %>><%= internship.semester %><%= internship.year %></td>
-            <td><a href="application/<%= internship.id %>"><%= internship.subject %></a></td>
-            <td><%= internship.company %></td>
-            <td>Villeville</td>
-            <td><%= internship.country %></td>
+            <td class="subject"><a href="application/<%= internship.id %>"><%= internship.subject %></a></td>
+            <td class="company"><%= internship.company %></td>
+            <td class="city">Villeville</td>
+            <td class="country"><%= internship.country %></td>
           </tr>
       <% end %>
     </table>
@@ -74,9 +81,51 @@ $(document).ready(function() {
         $internshipInfoPanel.find('.panel-body').html(data.description)
     }
 
+    $rows = $('table tr[internship-id]');
+
     // When row is click: highlight it. Other rows should not be highlighted.
-    $('table').on('click', 'tbody tr', function(event) {
+    $rows.on('click', function(event) {
         $(this).addClass('success').siblings().removeClass('success');
     });
+
+    $filters = $('table input');
+
+    $filters.on("focusout", function () {
+        filterTable()
+    });
+
+    $filters.on("keyup", function (e) {
+        //If user pressed enter key: remove focus, which triggers table filter.
+        if (e.keyCode == 13) {
+            $(this).blur();
+        }
+    });
+
+    function filterTable() {
+        //Determine which filtered contain text entered by user to filter table.
+        var $filtersUsed = $filters.filter(function () {
+            return $.trim(this.value).length > 0;
+        });
+
+        //If user did not input anything, or if field is blank (spaces), return and show everything.
+        if ($filtersUsed.length === 0)
+            return $rows.show();
+
+        //Getting class of the filters used by the user.
+        var $filterClass = '.' + $filtersUsed.map(function () {
+                    return this.className.split(' ')[1];
+                }).get().join(',.');
+
+        //Filtering table. Only filtering td with class that should be filtered.
+        $rows.hide().filter(function () {
+            return $('td', this).filter($filterClass).filter(function () {
+                        var content = this.textContent.toLowerCase();
+                        var inputVal = $filtersUsed.filter('.' + this.className).val().toLowerCase();
+
+                        return content.indexOf(inputVal) > -1;
+
+                    }).length === $filtersUsed.length;
+        }).show();
+    }
 });
 </script>
