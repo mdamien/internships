@@ -28,7 +28,11 @@ body {
     width: 30px;
 }
 
+#internship-info.affix-top {
+    max-height: 70vh;
+}
+
 #internship-info {
     overflow-y: auto;
-    max-height: 85%;
+    max-height: 80vh;
 }
