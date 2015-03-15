@@ -14,7 +14,7 @@
             <%= radio_button_tag(:from_semester, "A", params[:from_semester] == "A") %>Automne
           </label>
         </div>
-        <%= select_tag(:from_year, options_for_select(@years, @query[:from_year]), class: "form-control") %>
+        <%= select_tag(:from_year, options_for_select(@years, params[:from_year]), class: "form-control") %>
       </div>
       <div class="form-group col-md-3">
         <%= label_tag(:to_year, "À", style: "margin-right: 5px;") %>
@@ -26,7 +26,7 @@
             <%= radio_button_tag(:to_semester, "A", params[:to_semester] == "A") %>Automne
           </label>
         </div>
-        <%= select_tag(:to_year, options_for_select(@years, @query[:to_year]), class: "form-control") %>
+        <%= select_tag(:to_year, options_for_select(@years, params[:to_year]), class: "form-control") %>
       </div>
       <button type="submit" class="col-md-6 btn btn-primary">Chercher</button>
   <% end %>

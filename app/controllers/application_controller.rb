@@ -6,12 +6,6 @@ class ApplicationController < ActionController::Base
     #Retrieving most recent year data from database by default
     @internships = Internship.search(params)
     @years = Internship.allInternshipYears.map { |i| i.year }
-    @query = {
-        from_year: params[:from_year],
-        to_year: params[:to_year],
-        from_semester: params[:from_semester],
-        to_semester: params[:to_semester]
-    }
   end
   
   def view
