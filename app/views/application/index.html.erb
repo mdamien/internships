@@ -28,7 +28,11 @@
         </div>
         <%= select_tag(:to_year, options_for_select(@years, params[:to_year]), class: "form-control") %>
       </div>
-      <button type="submit" class="col-md-6 btn btn-primary">Chercher</button>
+      <div class="form-group col-md-3">
+        <%= label_tag(:internship_type, "Stages", style: "margin-right: 5px;") %>
+        <%= select_tag(:internship_type, options_for_select(@internship_types, params[:internship_type]), class: "form-control") %>
+      </div>
+      <button type="submit" class="col-md-3 btn btn-primary">Chercher</button>
   <% end %>
 </div>
 
@@ -39,7 +43,7 @@
     <table class="table table-condensed table-hover">
       <thead>
       <tr>
-        <th>Semestre</th>
+        <th>Sem.</th>
         <th>Sujet</th>
         <th>Entreprise</th>
         <th>Ville</th>
@@ -59,7 +63,7 @@
             <td <% if internship.semester == 'A' %>class="text-success"<% end %>><%= internship.semester %><%= internship.year %></td>
             <td class="subject"><a href="application/<%= internship.id %>"><%= internship.subject %></a></td>
             <td class="company"><%= internship.company %></td>
-            <td class="city">Villeville</td>
+            <td class="city">Ville</td>
             <td class="country"><%= internship.country %></td>
           </tr>
       <% end %>

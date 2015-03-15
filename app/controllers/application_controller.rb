@@ -16,6 +16,14 @@ class ApplicationController < ActionController::Base
 
   #Default search parameters.
   def set_search_query
+    @internship_types = {
+        "Tous" => "all",
+        "TN05" => "tn05",
+        "TN09" => "tn09",
+        "TN10" => "tn10",
+        "Apprentissage" => "apprenticeship",
+        "Interculturel" => "intercultural"
+    }
     most_recent_year = Internship.maximum("year")
 
     #Adding missing parameters by default
@@ -23,6 +31,7 @@ class ApplicationController < ActionController::Base
     params[:to_year] ||= most_recent_year
     params[:from_semester] ||= "P"
     params[:to_semester] ||= "A"
+    params[:internship_type] ||= @internship_types["Tous"]
   end
 
 end

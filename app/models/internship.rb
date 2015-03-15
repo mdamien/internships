@@ -16,7 +16,7 @@ class Internship < ActiveRecord::Base
   end
 
   def self.search query
-    if query.has_key?(:from_year) && query.has_key?(:to_year) && query.has_key?(:from_semester) && query.has_key?(:to_semester)
+    if query.has_key?(:from_year) && query.has_key?(:to_year) && query.has_key?(:from_semester) && query.has_key?(:to_semester) && query.has_key?(:internship_type)
       internships = from_year(query[:from_year]).to_year(query[:to_year])
 
       if query[:from_semester] == 'A'
@@ -26,6 +26,19 @@ class Internship < ActiveRecord::Base
       if query[:to_semester] == 'P'
         #Removing fall internship of from_year.
         internships = internships.where.not("semester LIKE '%A%' and year = ?", query[:to_year])
+      end
+
+      case query[:internship_type]
+        when "tn05"
+          internships = internships.where("level LIKE '%ouvrier%'")
+        when "tn09"
+         internships = internships.where("level LIKE '%assistant%'")
+        when "tn10"
+          internships = internships.where("level LIKE '%projet de fin%'")
+        when "intercultural"
+          internships = internships.where("level LIKE '%interculturel%'")
+        when "apprenticeship"
+          internships = internships.where("level LIKE '%apprentissage%'")
       end
 
       return order_internships(internships)
