@@ -1,9 +1,42 @@
 <h3>Bienvenue sur l'interface de consultation des stages effectués à l'UTC.</h3>
 <p>Vous pouvez utiliser les filtres mis à votre disposition pour rechercher des stages correspondant à votre profil.</p>
 
+<!-- Internship dates and branch form. -->
+<div class="row well">
+  <%= form_tag("/", method: "get", class: "form-inline") do %>
+      <div class="form-group col-md-3">
+        <%= label_tag(:from_year, "De", style: "margin-right: 5px;") %>
+        <div class="btn-group" data-toggle="buttons" style="margin-right: 5px;">
+          <label class="btn btn-default btn-sm  <% if params[:from_semester] == "P" %>active<% end %>">
+            <%= radio_button_tag(:from_semester, "P", params[:from_semester] == "P") %>Printemps
+          </label>
+          <label class="btn btn-default btn-sm  <% if params[:from_semester] == "A" %>active<% end %>">
+            <%= radio_button_tag(:from_semester, "A", params[:from_semester] == "A") %>Automne
+          </label>
+        </div>
+        <%= select_tag(:from_year, options_for_select(@years, @query[:from_year]), class: "form-control") %>
+      </div>
+      <div class="form-group col-md-3">
+        <%= label_tag(:to_year, "À", style: "margin-right: 5px;") %>
+        <div class="btn-group" data-toggle="buttons" style="margin-right: 5px;">
+          <label class="btn btn-default btn-sm <% if params[:to_semester] == "P" %>active<% end %>">
+            <%= radio_button_tag(:to_semester, "P", params[:to_semester] == "P") %>Printemps
+          </label>
+          <label class="btn btn-default btn-sm <% if params[:to_semester] == "A" %>active<% end %>">
+            <%= radio_button_tag(:to_semester, "A", params[:to_semester] == "A") %>Automne
+          </label>
+        </div>
+        <%= select_tag(:to_year, options_for_select(@years, @query[:to_year]), class: "form-control") %>
+      </div>
+      <button type="submit" class="col-md-6 btn btn-primary">Chercher</button>
+  <% end %>
+</div>
+
 <div class="row">
+  <!-- Table containing internships. -->
   <div class="col-md-9">
-    <table class="table table-condensed table-hover ">
+    <% if !@internships.nil? and @internships.any? %>
+    <table class="table table-condensed table-hover">
       <thead>
       <tr>
         <th>Semestre</th>
@@ -31,6 +64,13 @@
           </tr>
       <% end %>
     </table>
+    <% else %>
+        <div class="alert alert-dismissible alert-danger">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          <h4>Pas de résultat.</h4>
+          <p>Aucune entrée ne correspond aux critères de recherche.</p>
+        </div>
+    <% end %>
   </div>
 
   <!-- Panel displaying info of the selected internship. Only visible on large screen devices. -->
