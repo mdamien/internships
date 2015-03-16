@@ -28,11 +28,15 @@
         </div>
         <%= select_tag(:to_year, options_for_select(@years, params[:to_year]), class: "form-control") %>
       </div>
-      <div class="form-group col-md-3">
+      <div class="form-group col-md-2">
         <%= label_tag(:internship_type, "Stages", style: "margin-right: 5px;") %>
-        <%= select_tag(:internship_type, options_for_select(@internship_types, params[:internship_type]), class: "form-control") %>
+        <%= select_tag(:internship_type, options_for_select(@internship_types, params[:internship_type]), class: "form-control", id: "internship-type-filter") %>
       </div>
-      <button type="submit" class="col-md-3 btn btn-primary">Chercher</button>
+      <div id="branch-type-filter" class="form-group col-md-2">
+        <%= label_tag(:branch, "Branche", style: "margin-right: 5px;") %>
+        <%= select_tag(:branch, options_for_select(@all_branches, params[:branch]), class: "form-control") %>
+      </div>
+      <button type="submit" class="col-md-2 btn btn-primary">Chercher</button>
   <% end %>
 </div>
 
@@ -172,5 +176,24 @@ $(document).ready(function() {
                     }).length === $filtersUsed.length;
         }).show();
     }
+
+    //Branch type filter should be hidden when user does not want to see branch internships.
+    $branchTypeFilter = $('#branch-type-filter');
+    $internshipTypeFilter = $('#internship-type-filter');
+    function manageBranchTypeFilter() {
+        internshipType = $internshipTypeFilter.val();
+        if (internshipType == "all" || internshipType == "tn05") {
+            $branchTypeFilter.children().hide();
+            $branchTypeFilter.find('select').val("all");
+        }
+        else {
+            $branchTypeFilter.children().show();
+        }
+    }
+    manageBranchTypeFilter();
+
+    $internshipTypeFilter.on('change', function(){
+       manageBranchTypeFilter();
+    });
 });
 </script>

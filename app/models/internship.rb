@@ -16,7 +16,7 @@ class Internship < ActiveRecord::Base
   end
 
   def self.search query
-    if query.has_key?(:from_year) && query.has_key?(:to_year) && query.has_key?(:from_semester) && query.has_key?(:to_semester) && query.has_key?(:internship_type)
+    if query.has_key?(:from_year) && query.has_key?(:to_year) && query.has_key?(:from_semester) && query.has_key?(:to_semester) && query.has_key?(:internship_type) && query.has_key?(:branch)
       internships = from_year(query[:from_year]).to_year(query[:to_year])
 
       if query[:from_semester] == 'A'
@@ -41,6 +41,12 @@ class Internship < ActiveRecord::Base
           internships = internships.where("level LIKE '%apprentissage%'")
       end
 
+      # Branch filter if internship type is not tn05 or not all internships.
+      branch = Internship.all_branches[query[:branch]]
+      if !branch.nil? && branch.has_key?("search") && (query[:internship_type] != "tn05" || query[:internship_type] != "all")
+        internships = internships.where("branch LIKE ?", "%"+ branch["search"] + "%")
+      end
+
       return order_internships(internships)
     end
 
@@ -48,7 +54,50 @@ class Internship < ActiveRecord::Base
     return most_recent_internships
   end
 
-  def self.allInternshipYears
+  def self.all_internship_years
     return select(:year).distinct.order(year: :ASC)
+  end
+
+  def self.internship_types
+    return {
+        "Tous" => "all",
+        "TN05" => "tn05",
+        "TN09" => "tn09",
+        "TN10" => "tn10",
+        "Apprentissage" => "apprenticeship",
+        "Interculturel" => "intercultural"
+    }
+  end
+
+  def self.all_branches
+    return {
+        "all" => {
+            "name" => "Toutes"
+        },
+        "gb" => {
+            "name" => "GB",
+            "search" => "Biologique"
+        },
+        "gi" => {
+            "name" => "GI",
+            "search" => "Informatique"
+        },
+        "gm" => {
+            "name" => "GM",
+            "search" => "Génie Mécanique"
+        },
+        "gp" => {
+            "name" => "GP",
+            "search" => "des Procédés"
+        },
+        "gsm" => {
+            "name" => "GSM",
+            "search" => "Systèmes Mécaniques"
+        },
+        "gsu" => {
+            "name" => "GSU",
+            "search" => "Urbains"
+        }
+    }
   end
 end
