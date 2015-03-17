@@ -2,6 +2,8 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_filter :set_search_query, :only => [:index]
 
+  before_filter CASClient::Frameworks::Rails::Filter
+
   def index
     #Retrieving most recent year data from database by default
     @internships = Internship.search(params)
@@ -10,6 +12,10 @@ class ApplicationController < ActionController::Base
   
   def view
     @internship = Internship.find(params[:id])
+  end
+
+  def logout
+    CASClient::Frameworks::Rails::Filter.logout(self)
   end
 
   protected
