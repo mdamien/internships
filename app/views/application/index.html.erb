@@ -102,11 +102,12 @@ $(document).ready(function() {
     }
 
     //Setting panel size when page is loaded.
-    resizeInternshipPanelInformation()
+    resizeInternshipPanelInformation();
 
     //Resizing panel width when size of the window changes.
     $(window).resize(function () {
         resizeInternshipPanelInformation();
+
     });
 
     $('tr[internship-id]').click(function(){
