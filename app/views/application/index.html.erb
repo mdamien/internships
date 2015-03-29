@@ -1,5 +1,6 @@
 <h3>Bienvenue sur l'interface de consultation des stages effectués à l'UTC.</h3>
-<p>Vous pouvez utiliser les filtres mis à votre disposition pour rechercher des stages correspondant à votre profil.</p>
+<p>Commencez par utiliser le formulaire ci-dessous pour rechercher les types de stages qui vous intéressent.</p>
+<p>Vous pouvez ensuite utiliser les filtres mis à votre disposition en dessous de chaque titre de colonne dans le tableau pour filtrer les stages dynamiquement.</p>
 
 <!-- Internship dates and branch form. -->
 <div class="row well">
@@ -56,10 +57,10 @@
       </thead>
       <tr>
         <td></td>
-        <td><input type="text" class="form-control subject" placeholder="Sujet" autocomplete="off"/></td>
-        <td><input type="text" class="form-control company" placeholder="Entreprise" autocomplete="off"/></td>
-        <td><input type="text" class="form-control city" placeholder="Ville" autocomplete="off"/></td>
-        <td><input type="text" class="form-control country" placeholder="Pays" autocomplete="off"/></td>
+        <td><div class="form-group has-warning"><input type="text" class="form-control subject" placeholder="Entrez une expression pour filtrer les sujets" autocomplete="off"/></div></td>
+        <td><div class="form-group has-warning"><input data-provide="typeahead" typeahead-search="company" type="text" class="form-control company" placeholder="Filtrer entreprises" autocomplete="off"/></div></td>
+        <td><div class="form-group has-warning"><input data-provide="typeahead" typeahead-search="city" type="text" class="form-control city" placeholder="Ville" autocomplete="off"/></div></td>
+        <td><div class="form-group has-warning"><input data-provide="typeahead" typeahead-search="country" type="text" class="form-control country" placeholder="Pays" autocomplete="off"/></div></td>
       </tr>
       <% @internships.each do |internship| %>
           <tr internship-id="<%= internship.id %>">
@@ -107,7 +108,6 @@ $(document).ready(function() {
     //Resizing panel width when size of the window changes.
     $(window).resize(function () {
         resizeInternshipPanelInformation();
-
     });
 
     $('tr[internship-id]').click(function(){
@@ -195,6 +195,23 @@ $(document).ready(function() {
 
     $internshipTypeFilter.on('change', function(){
        manageBranchTypeFilter();
+    });
+
+    $('input[data-provide="typeahead"]').each(function(){
+        var $this = $(this);
+
+        $this.typeahead({
+            autoSelect: false,
+            afterSelect: function(item){
+                filterTable();
+            },
+            minLength: 2,
+            source: function (query, process) {
+                return $.get('internships/search?search_by=' + $this.attr("typeahead-search") + '&q=' + query, function (data) {
+                    return process(data);
+                });
+            }
+        });
     });
 });
 </script>
