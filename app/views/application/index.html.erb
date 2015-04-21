@@ -145,9 +145,11 @@ $(document).ready(function() {
     });
 
     $filters.on("keyup", function (e) {
-        //If user pressed enter key: remove focus, which triggers table filter.
+        //If user pressed enter key: remove focus, which triggers table filter. (Only if it is not on a typeahead field. If typeahead, enter is only allowed when field is blank.
         if (e.keyCode == 13) {
-            $(this).blur();
+            if (!$(this).attr("data-provide") || !$(this).val()) {
+                $(this).blur();
+            }
         }
     });
 
@@ -197,6 +199,7 @@ $(document).ready(function() {
        manageBranchTypeFilter();
     });
 
+    /*
     $('input[data-provide="typeahead"]').each(function(){
         var $this = $(this);
 
@@ -210,6 +213,30 @@ $(document).ready(function() {
                 return $.get('internships/search?search_by=' + $this.attr("typeahead-search") + '&q=' + query, function (data) {
                     return process(data);
                 });
+            }
+        });
+    });*/
+
+    $internship_data = <%= @internship_data_json.to_json.html_safe %>;
+
+    $('input[data-provide="typeahead"]').each(function(){
+        var $this = $(this);
+
+        $this.typeahead({
+            autoSelect: true,
+            afterSelect: function(item){
+                filterTable();
+            },
+            minLength: 2,
+            displayText: function(item) {
+                return item;
+            },
+            source: function (query, process) {
+                switch ($this.attr("typeahead-search")) {
+                    case "company": return process($internship_data.companies);
+                    case "city": return process($internship_data.cities);
+                    case "country": return process($internship_data.countries);
+                }
             }
         });
     });
