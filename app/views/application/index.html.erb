@@ -233,9 +233,9 @@ $(document).ready(function() {
             },
             source: function (query, process) {
                 switch ($this.attr("typeahead-search")) {
-                    case "company": return process($internship_data.companies);
-                    case "city": return process($internship_data.cities);
-                    case "country": return process($internship_data.countries);
+                    case "company": return process($internship_data.companies.concat($this.val()));
+                    case "city": return process($internship_data.cities.concat($this.val()));
+                    case "country": return process($internship_data.countries.concat($this.val()));
                 }
             }
         });
