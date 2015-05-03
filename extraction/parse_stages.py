@@ -5,6 +5,8 @@ from pprint import pprint as pp
 
 print('let\'s parse it')
 
+stages_fails = []
+
 all_stages = []
 c = 0
 for filename in glob.glob('STAGES/*'):
@@ -19,6 +21,7 @@ for filename in glob.glob('STAGES/*'):
         sujet = soup.find('h3')
         if not sujet: #"pas d'infos sur le sujet"
             print("no sujet",n)
+            stages_fails.append({'n':n,'msg':'no_sujet'})
             continue
         sujet = sujet.text
 
@@ -26,6 +29,7 @@ for filename in glob.glob('STAGES/*'):
             branche = soup.find(attrs={'class':'marge100'}).find_next(attrs={'class':'marge100'})
             if not branche: #"personne a pris ce stage"
                 print("no branche",n)
+                stages_fails.append({'n':n,'msg':'no_branche'})
                 continue
             branche = branche.text.replace('\xa0','').strip()
             if len(branche.split()) < 2:
@@ -45,48 +49,6 @@ for filename in glob.glob('STAGES/*'):
             infos = soup.find('li').text.split('\n',2)
             niveau = infos[0]
             branche = infos[1].replace(', s','s').replace('specialité','').strip()
-
-        branche_abbrev = ""
-        bl = branche.lower()
-        if bl.startswith('inform') \
-            or bl.startswith('Ingénierie des Services et des Systèmes'.lower()) \
-            or bl.startswith("Sciences et Technologies de l'Information".lower()):
-            branche_abbrev = "GI"
-        elif bl.startswith('mécan'):
-            branche_abbrev = "GM/GSM"
-        elif bl.startswith('tronc'):
-            branche_abbrev = "TC"
-        elif bl.startswith('génie biologique'):
-            branche_abbrev = "GB"
-        elif bl.startswith('génie des procédés'):
-            branche_abbrev = "GP"
-        elif bl.startswith('systèmes urbains'):
-            branche_abbrev = "GSU"
-        else:
-            branche_abbrev = "autre"
-            print("branche inconnue:", n,branche[:50], "real:",stage_reel)
-
-        niveau_abbrev = ""
-        nl = niveau.lower()
-        if 'assistant' in nl:
-            niveau_abbrev = "TN09"
-        elif 'ouvrier' in nl:
-            niveau_abbrev = "TN05"
-        elif 'fin' in nl:
-            niveau_abbrev = "TN10"
-        elif 'master' in nl:
-            niveau_abbrev = "master"
-        elif 'apprenti' in nl:
-            niveau_abbrev = "apprentissage"
-        elif 'intercul' in nl:
-            niveau_abbrev = "interculturel"
-        elif 'licence' in nl:
-            niveau_abbrev = "licence"
-        elif 'hutech' in nl:
-            niveau_abbrev = "hutech"
-        else:
-            niveau_abbrev = "autre"
-            print("niveau inconnu:", n,niveau[:30], "real:",stage_reel)
 
         semestre = soup.find('label').text
         semestre, annee = semestre.split(' ')[:2]
@@ -128,7 +90,6 @@ for filename in glob.glob('STAGES/*'):
         'num':n,
         'sujet':sujet,
         'niveau':niveau,
-        'niveau_abbrev': niveau_abbrev,
         'branche':branche,
         'company':company,
         'semestre_annee':int(annee),
@@ -137,8 +98,7 @@ for filename in glob.glob('STAGES/*'):
         'addresse':adresse,
         'etudiant':etu,
         'tuteur':tuteur,
-        'stage_reel':stage_reel,
-        'branche_abbrev': branche_abbrev,
+        'done':stage_reel,
     }
 
     all_stages.append(result)
@@ -147,6 +107,8 @@ for filename in glob.glob('STAGES/*'):
     if c % 100 == 0:
         print("DONE: ",c)
 
+json.dump(stages_fails, open('data/details_failed.json','w'), indent=2)
 json.dump(all_stages, open('data/details.json','w'), indent=2)
 
 print('parsed', len(all_stages))
+print('fail', len(stages_fails))

@@ -55,7 +55,7 @@ var FilterTable = React.createClass({
                     if( to_year && line.semestre_annee > to_year){
                         return false;
                     }
-                    if(hide_not_real && !line.stage_reel){
+                    if(hide_not_real && !line.done){
                         return false;
                     }
                     if(type && line.niveau_abbrev != type){

@@ -6,9 +6,10 @@ typehadead ?
 
 Performance
 -----
-word set in each internship
-re-build table only when necessary
+INDEXING: word set in each internship
+REDRAWINGs: re-build table only when necessary
 
 DATA
 -------
 lightweight version (< 5mb) ?
+include confidentials
