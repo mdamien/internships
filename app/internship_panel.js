@@ -1,4 +1,4 @@
-InternshipPanel = React.createClass({
+var InternshipPanel = React.createClass({
 
     render: function(){
       var style = {

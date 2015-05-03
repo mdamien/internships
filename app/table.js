@@ -1,4 +1,4 @@
-Table = React.createClass({
+var Table = React.createClass({
   handleSelected: function(x){
       this.props.onSelected(x);
   },

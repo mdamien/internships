@@ -9,7 +9,7 @@ wr = csv.writer(myfile)
 wr.writerow([x.strip() for x in "num, addresse, branche, filiere," \
         "company, description, etudiant, niveau," \
         "semestre, sujet, tuteur, done,confidentiel, country, city".split(',')])
-for _ in range(100):
+for _ in range(4000):
     num = fake.random_int(min=0, max=9999)
     addresse = fake.street_address()+"\n"+str(fake.random_int(min=0, max=7000)) \
         +" "+fake.city()+"\n"+fake.country().upper()
@@ -23,7 +23,7 @@ for _ in range(100):
     niveau = fake.random_element(('ouvrier','projet de fin d\'étude','stage ouvrier'))
     country = fake.country().upper()
     city = fake.city()
-    semestre = fake.random_element(('A','P'))+str(fake.year())
+    semestre = fake.random_element(('A','P'))+str(fake.random_int(min=2002, max=2015))
     sujet = fake.sentence(nb_words=6, variable_nb_words=True)
     tuteur = fake.name()
     wr.writerow((num, addresse, branche, filiere,

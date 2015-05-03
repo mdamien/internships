@@ -1,4 +1,4 @@
-Filters = React.createClass({
+var Filters = React.createClass({
   handleTextFilterChange: function(){
     var filters = this.props.filters;
     filters.text = this.refs.text.getDOMNode().value;

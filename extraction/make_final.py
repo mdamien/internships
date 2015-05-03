@@ -54,22 +54,17 @@ for attrs in data:
 
 print("stages.csv done")
 
+import random;random.shuffle(data)
+data = data[:3000]
 
-data = data[:100]
-
-out = open('../data/mini_stages.csv', 'w', newline='')
+out = open('../data/stages_mini.csv', 'w', newline='')
 w = csv.writer(out)
 
 header = list(data[0].keys())
 print(header)
 w.writerow(header)
 
-def get(s, key):
-    if key in ('done','confidentiel'):
-        return 'x' if s[key] else ''
-    return s.get(key)
-
 for attrs in data:
     w.writerow([get(attrs,x) for x in header])
 
-print("stages.csv done")
+print("stages_mini.csv done")
