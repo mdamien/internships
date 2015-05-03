@@ -81,23 +81,22 @@ var Loader = React.createClass({
                     else if(nl.indexOf('projet') >= 0){
                         niveau_abbrev = "TN10"
                     }
-                    if(nl.indexOf('master') >= 0){
+                    else if(nl.indexOf('master') >= 0){
                         niveau_abbrev = "master"
                     }
-                    if(nl.indexOf('apprenti') >= 0){
+                    else if(nl.indexOf('apprenti') >= 0){
                         niveau_abbrev = "apprentissage"
                     }
-                    if(nl.indexOf('intercul') >= 0){
+                    else if(nl.indexOf('intercul') >= 0){
                         niveau_abbrev = "interculturel"
                     }
-                    if(nl.indexOf('licence') >= 0){
+                    else if(nl.indexOf('licence') >= 0){
                         niveau_abbrev = "licence"
                     }
                     else{
                         niveau_abbrev = "autre"
                         console.log("niveau inconnu:", x.id, x.num,x.niveau.slice(0,30), "done:",x.done)
                     }
-                    console.log(x.niveau,' => ', niveau_abbrev)
                     x.niveau_abbrev = niveau_abbrev;
                 })
                 results.data.sort(function(x,y){
