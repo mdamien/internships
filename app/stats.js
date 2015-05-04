@@ -17,7 +17,8 @@ var Stats = React.createClass({
     },
     render: function(){
         var years = {}
-        this.props.data.reverse().map(function(s){
+        for(var i = this.props.data.length-1; i >= 0;i--){
+            var s = this.props.data[i];
             var sem = s.semestre+s.semestre_annee
             if(!(sem in years)){
                 years[sem] = {done:0,all:0,confidentiel:0,
@@ -38,7 +39,7 @@ var Stats = React.createClass({
                 }
             }
             y.all += 1;
-        })
+        }
         var by_year_done_data = {
             labels: _.keys(years),
             datasets: [
@@ -80,6 +81,7 @@ var Stats = React.createClass({
         var by_year2 = <Chart.React.Line data={by_year_branche_data}/>
         var by_year3 = <Chart.React.Bar data={by_year_done_data}/>
         return <div>
+            <h5>Evolution des stages dans le temps</h5>
             <div className="row">
                 <div className="col-md-4">
                     {by_year}

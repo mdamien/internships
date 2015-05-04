@@ -106,7 +106,7 @@
         break;
    }
 
-    return randomWithin([sMin, sMax]);
+    return randomWithin([sMin, sMax], options.seed);
 
   }
 
@@ -235,7 +235,9 @@
 
   function randomWithin (range, seed) {
     var seeded_random = function(seed){
-      return Math.random() //TODO: make the seed work
+      if(seed == undefined){
+        console.warning('seed undefined for random color',seed)
+      }
       var x = Math.sin(seed) * 10000;
       return x - Math.floor(x);
     }

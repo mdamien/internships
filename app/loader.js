@@ -17,11 +17,12 @@ var Loader = React.createClass({
     },
     load: function(){
         this.setState({loading:true})
-        Papa.parse(this.state.data_url, {
+        Papa.parse("/"+this.state.data_url, {
             download: true,
             header: true,
             skipEmptyLines: true,
             cache: false, //TODO add debug mode for this
+            worker: true,
             complete: function(results) {
                 results.data.map(function(x,i){
                     x.done = x.done == "x";

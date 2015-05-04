@@ -80,7 +80,7 @@ var Filters = React.createClass({
         {options}
       </select>
       {divider}
-      <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <input type="checkbox" className="checkbox" defaultChecked={false}
             onChange={this.handleDisplayNotRealChange} /> Cacher sujetss non pris
         </label>
