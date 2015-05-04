@@ -63,7 +63,7 @@ var Loader = React.createClass({
                         branche_abbrev = "HuTech"
                     }else{
                         branche_abbrev = "autre"
-                        console.log("branche inconnue:", x.num, x.id,x.branche.slice(0,50), "done:",x.done)
+                        //console.log("branche inconnue:", x.num, x.id,x.branche.slice(0,50), "done:",x.done)
                     }
                     x.branche_abbrev = branche_abbrev;
 
@@ -95,7 +95,7 @@ var Loader = React.createClass({
                     }
                     else{
                         niveau_abbrev = "autre"
-                        console.log("niveau inconnu:", x.id, x.num,x.niveau.slice(0,30), "done:",x.done)
+                        //console.log("niveau inconnu:", x.id, x.num,x.niveau.slice(0,30), "done:",x.done)
                     }
                     x.niveau_abbrev = niveau_abbrev;
                 })

@@ -8,12 +8,15 @@ var Loaded = React.createClass({
         this.setState({page:page})
     },
     render: function(){
-        var pages = [['table','Données'],['stats','Stats']];
+        var pages = [['table','Données','th-list'],['stats','Stats','signal']];
         var pages_btns = pages.map(function(x,i){
             var klass = "btn " + (this.state.page == x[0] ? 'btn-primary': 'btn-default');
+            var icon = "glyphicon glyphicon-"+x[2]
             return (<span key={i}>
                     &nbsp;&nbsp;
-                    <button className={klass} onClick={this.changePage.bind(null,x[0])}>{x[1]}</button>
+                    <button className={klass} onClick={this.changePage.bind(null,x[0])}>
+                        <span className={icon} aria-hidden="true"></span> {x[1]}
+                    </button>
                 </span>)
         }.bind(this)) 
         var content = <FilterTable data={this.props.data}/>

@@ -18,7 +18,7 @@ for stage in basics:
     try:
         n = int(stage['num'])
     except:
-        stage['confidential'] = True
+        stage['confidentiel'] = True
     if n in details_dict:
         stage.update(details_dict[n])
     if 'done' not in stage:
@@ -53,6 +53,26 @@ for attrs in data:
     w.writerow([get(attrs,x) for x in header])
 
 print("stages.csv done")
+
+
+
+
+
+out = open('../data/stages_done.csv', 'w', newline='')
+w = csv.writer(out)
+
+header = list(data[0].keys())
+print(header)
+w.writerow(header)
+
+for attrs in data:
+    if attrs['done']:
+        w.writerow([get(attrs,x) for x in header])
+
+print("stages_done.csv done")
+
+
+
 
 import random;random.shuffle(data)
 data = data[:3000]

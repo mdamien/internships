@@ -40,15 +40,14 @@ var Filters = React.createClass({
     var options = dates.map(function(d,i){
         return <option value={d} key={i}>{d}</option>
     })
+    var divider = (<span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>)
     return (
-      <div className="form-inline row">
-      <div className="form-group col-md-2">
+      <div className="form-inline">
         <input className="form-control" name="text" type="text" ref="text"
           onChange={this.handleTextFilterChange}
           placeholder="Rechercher..." value={this.props.filters.text}/>
-      </div>
-      <div className="form-group col-md-2">
-      <label htmlFor="internship_type">type</label>
+      {divider}
+      <label htmlFor="internship_type">Type</label>
       <select name="internship_type" className="form-control" defaultValue="all" ref="type"
         onChange={this.handleTypeChange} >
         <option value="all">Tous</option>
@@ -58,8 +57,7 @@ var Filters = React.createClass({
         <option value="apprentissage">Apprentissage</option>
         <option value="interculturel">Interculturel</option>
       </select>
-      </div>
-      <div className="form-group col-md-2">
+      {divider}
       <label htmlFor="branch">Branche</label>
       <select name="branch" className="form-control" defaultValue="all"
         onChange={this.handleBranchChange} ref="branch">
@@ -70,27 +68,22 @@ var Filters = React.createClass({
         <option value="GP">GP</option>
         <option value="GSU">GSU</option>
       </select>
-      </div>
-      <div className="checkbox checkbox-inline col-md-2">
-        <label>
-          <input type="checkbox" defaultChecked={false}
-            onChange={this.handleDisplayNotRealChange} /> Cacher stages non fait
-        </label>
-      </div>
-      <div className="form-group col-md-2">
+      {divider}
       <label htmlFor="from">De</label>
       <select name="from" className="form-control" defaultValue={date_min} ref="from"
         onChange={this.handleFromChange}>
         {options}
       </select>
-      </div>
-      <div className="form-group col-md-2">
-      <label htmlFor="to">A</label>
+      <label htmlFor="to">&nbsp;&nbsp;&nbsp;à</label>
       <select name="to" className="form-control" defaultValue={date_max} ref="to"
         onChange={this.handleToChange}>
         {options}
       </select>
-      </div>
+      {divider}
+      <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <input type="checkbox" className="checkbox" defaultChecked={false}
+            onChange={this.handleDisplayNotRealChange} /> Cacher sujetss non pris
+        </label>
       </div>
       );
 }

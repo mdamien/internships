@@ -9,17 +9,21 @@ var Table = React.createClass({
     }
     var rows = this.props.data.slice(0,LIMIT).map(function(x){
         var klass = "";
+        var indicator = "";
         if(!x.done){
-            klass = "warning"
+            indicator = (<span className="glyphicon glyphicon-warning-sign" aria-hidden="true"
+                    title="Sujet non pris"></span>)
+        }
+        if(x.confidentiel){
+            indicator = (<span className="glyphicon glyphicon-eye-close" aria-hidden="true"
+                title="Sujet confidentiel"></span>)
         }
         if(this.props.selected && this.props.selected.id == x.id){
             klass = "success"
         }
-        if(x.confidentiel){
-            klass = "danger"
-        }
         infos =  (<tr style={tr_style} key={x.id} onClick={this.handleSelected.bind(null,x)} className={klass}>
-            <td>{x.semestre}{x.semestre_annee} {x.niveau_abbrev} {x.branche_abbrev}</td>
+            <td>{indicator} {x.semestre}{x.semestre_annee} {x.niveau_abbrev} {x.branche_abbrev}
+            </td>
             <td>{x.sujet}</td>
             <td><b>{x.company}</b></td>
             <td>{x.city} {x.country
@@ -27,6 +31,10 @@ var Table = React.createClass({
             </tr>)
         return infos;
     }.bind(this))
+    var extra_row = "";
+    if(this.props.data.length > LIMIT){
+        extra_row = <tr><th colSpan="4">...</th></tr>
+    }
     return (
         <table className="table table-condensed table-hover table-striped">
         <thead>
@@ -39,8 +47,7 @@ var Table = React.createClass({
         </thead>
         <tbody>
         {rows}
-        <tr><th colSpan="4">{this.props.data.length > LIMIT ?  "..." : ''}</th></tr>
-
+        {extra_row}
         </tbody>
         </table>
         )
