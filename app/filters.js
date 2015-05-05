@@ -42,7 +42,7 @@ var Filters = React.createClass({
     })
     var divider = (<span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>)
     return (
-      <div className="form-inline">
+      <div className="form-inline well">
         <input className="form-control" name="text" type="text" ref="text"
           onChange={this.handleTextFilterChange}
           placeholder="Rechercher..." value={this.props.filters.text}/>

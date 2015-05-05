@@ -1,6 +1,8 @@
 Chart.defaults.global.animation = false;
 Chart.defaults.global.responsive = true;
 
+//TODO: switch to http://nvd3.org
+
 var Stats = React.createClass({
     addRandomColor: function(d, seed){
         var a = function(rgb,a){

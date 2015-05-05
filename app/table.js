@@ -1,13 +1,20 @@
 var Table = React.createClass({
+  getInitialState: function(){
+    return {
+        'limit':200,
+    }
+  },
   handleSelected: function(x){
       this.props.onSelected(x);
   },
+  handleExpandLimit: function(x){
+      this.setState({limit:this.state.limit+100});
+  },
   render: function(){
-    var LIMIT = 200;
     var tr_style = {
         cursor:'pointer',
     }
-    var rows = this.props.data.slice(0,LIMIT).map(function(x){
+    var rows = this.props.data.slice(0,this.state.limit).map(function(x){
         var klass = "";
         var indicator = "";
         if(!x.done){
@@ -32,8 +39,10 @@ var Table = React.createClass({
         return infos;
     }.bind(this))
     var extra_row = "";
-    if(this.props.data.length > LIMIT){
-        extra_row = <tr><th colSpan="4">...</th></tr>
+    if(this.props.data.length > this.state.limit){
+        extra_row = (<tr><th colSpan="4" className="text-center">
+                <button className="btn btn-primary" onClick={this.handleExpandLimit}>Afficher plus</button>
+            </th></tr>);
     }
     return (
         <table className="table table-condensed table-hover table-striped">

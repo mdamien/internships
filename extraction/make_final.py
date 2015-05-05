@@ -49,6 +49,7 @@ def get(s, key):
         return 'x' if s[key] else ''
     return s.get(key)
 
+done = set()
 for attrs in data:
     w.writerow([get(attrs,x) for x in header])
 

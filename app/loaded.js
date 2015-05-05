@@ -24,7 +24,7 @@ var Loaded = React.createClass({
             content = <Stats data={this.props.data} />
         }
         return (<div>
-                <h4>Stages UTC <small>{this.props.data.length} stages</small>
+                <h4>Stages UTC <small>{this.props.data.length} sujets</small>
                 {pages_btns}
                 </h4>
                 <hr/>

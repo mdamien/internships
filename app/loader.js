@@ -17,12 +17,19 @@ var Loader = React.createClass({
     },
     load: function(){
         this.setState({loading:true})
-        Papa.parse("/"+this.state.data_url, {
+        Papa.parse(window.location.pathname+this.state.data_url, {
             download: true,
             header: true,
             skipEmptyLines: true,
             cache: false, //TODO add debug mode for this
             worker: true,
+            error: function(err){
+                console.log(err)
+                this.setState({
+                    loading:false,
+                    error:" "+err,
+                })
+            }.bind(this),
             complete: function(results) {
                 results.data.map(function(x,i){
                     x.done = x.done == "x";
@@ -121,10 +128,13 @@ var Loader = React.createClass({
     render: function(){
         var content = "";
         if(this.state.loading){
-            content = <strong>loading...{this.state.data_url}</strong>;
+            content = <strong>chargement...{this.state.data_url}</strong>;
         }
         else if(this.state.data.length > 0){
             content = (<Loaded data={this.state.data} />);
+        }
+        if(this.state.error){
+            content =  <p>Error lors du chargement de <b>{this.state.data_url}</b>: {this.state.error}</p>;
         }
         return (<div>
             {content}
