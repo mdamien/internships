@@ -1,7 +1,10 @@
 - copy paste index.html
 - basics.py
 - basics2.py
-- copy paste curl to download.py
+- copy paste curl from ent to download.py
 - download.py
 - parse_stages.py
 - make_final.py
+
+
+- geoloc.py to enrich the geolocation data after parse_stages.py. API key from Google necessary
