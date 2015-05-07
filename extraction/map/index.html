@@ -24,7 +24,7 @@
             latlng = L.latLng(50.5, 30.51);
 
         var map = L.map('map', {center: latlng, zoom: 2, layers: [tiles]});
-        $.getJSON('../data/geocoded_cold.json',function(data){
+        $.getJSON('../data/geocoded.json',function(data){
             var markers = L.markerClusterGroup({});
 
             var count_bad = 0;
