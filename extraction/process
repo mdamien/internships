@@ -4,7 +4,8 @@
 - copy paste curl from ent to download.py
 - download.py
 - parse_stages.py
-- make_final.py
+- enrich.py
+- make_stages.py
 
 
 - geoloc.py to enrich the geolocation data after parse_stages.py. API key from Google necessary
