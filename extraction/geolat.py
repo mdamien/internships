@@ -1,7 +1,10 @@
-import requests, json, collections
+import requests, json, collections, random
 
 stages = json.load(open('data/details.json'))
 addrs = collections.Counter([s['addresse'] for s in stages])
+
+addrs = list(addrs.items())
+random.shuffle(addrs)
 
 geocoded = json.load(open('data/geocoded_cold.json'))
 
@@ -18,11 +21,11 @@ def google(addr):
         print(r)
     return r
 
-for addr,n in addrs.most_common():
+for addr,n in addrs:
     if addr in geocoded and len(geocoded[addr]['results']) != 0:
         continue
     print(len(geocoded),'/',len(addrs))
-    print("geocode:\n",addr)
+    print("geocode:\n",addr,n)
     google(addr)
     with open('data/geocoded.json','w') as f:
         json.dump(geocoded,f,indent=2)

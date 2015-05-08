@@ -47,7 +47,7 @@ for stage in basics:
                     lng,lat = loc
         except Exception as e:
             print(e)
-    if lat: 
+    if lat != None: 
         geocoded_count += 1
 
     stage['lat'] = lat
