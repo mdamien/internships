@@ -1,8 +1,14 @@
 class Internship < ActiveRecord::Base
+  include Filterable
+
   scope :from_year, -> (year) { where("year >= ?", year) }
   scope :to_year, -> (year) { where("year <= ?", year) }
   scope :from_semester, -> (from_year, from_semester) { where.not("semester LIKE '%P%' and year = ?", from_year) unless from_semester == 'P' }
   scope :to_semester, -> (to_year, to_semester) { where.not("semester LIKE '%A%' and year = ?", to_year) unless to_semester == 'A' }
+  scope :company_like, -> (company) { where("company LIKE ?", "%"+ company + "%") }
+  scope :country_like, -> (country) { where("country LIKE ?", "%"+ country + "%") }
+  scope :city_like, -> (city) { where("city LIKE ?", "%"+ city + "%") }
+  scope :filiere_like, -> (filiere) { where("filiere LIKE ?", "%"+ filiere + "%") }
 
   def self.order_internships
     return order(year: :DESC)
@@ -51,6 +57,11 @@ class Internship < ActiveRecord::Base
 
   def self.internship_count_by_semester query
     internships = search(query)
+
+    #internships = internships.company_like(query[:company]) if query[:company].present?
+    #internships = internships.country_like(query[:country]) if query[:country].present?
+
+    internships = internships.filter(query.slice(:company_like, :country_like, :city_like, :filiere_like))
     internships = internships.group("year").group("semester").count
 
     return internships
