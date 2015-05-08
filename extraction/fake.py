@@ -6,14 +6,14 @@ fake = Faker(locale="fr_FR")
 
 myfile = open("data/fake.csv", 'w')
 wr = csv.writer(myfile)
-wr.writerow([x.strip() for x in "num, addresse, branche, filiere," \
+wr.writerow([x.strip() for x in "num, addresse, branche_abbrev, filiere," \
         "company, description, etudiant, niveau," \
-        "semestre, sujet, tuteur, done,confidentiel, country, city".split(',')])
-for _ in range(4000):
+        "semestre, semestre_annee, sujet, tuteur, done,confidentiel, country, city,lat,lng".split(',')])
+for _ in range(500):
     num = fake.random_int(min=0, max=9999)
     addresse = fake.street_address()+"\n"+str(fake.random_int(min=0, max=7000)) \
         +" "+fake.city()+"\n"+fake.country().upper()
-    branche = fake.random_element(('Informatique','Mécanique','Tronc Commun'))
+    branche_abbrev = fake.random_element(('GI','GM/GSM','GB'))
     done = fake.random_element(('x', 'x',' '))
     confidentiel = fake.random_element((' ', ' ',' ','x', ' '))
     filiere = fake.sentence(nb_words=5)
@@ -23,9 +23,13 @@ for _ in range(4000):
     niveau = fake.random_element(('ouvrier','projet de fin d\'étude','stage ouvrier'))
     country = fake.country().upper()
     city = fake.city()
-    semestre = fake.random_element(('A','P'))+str(fake.random_int(min=2002, max=2015))
+    semestre = fake.random_element(('A','P'))
+    semestre_annee = str(fake.random_int(min=2002, max=2015))
     sujet = fake.sentence(nb_words=6, variable_nb_words=True)
+    lat = fake.latitude()
+    lng = fake.longitude()
     tuteur = fake.name()
-    wr.writerow((num, addresse, branche, filiere,
+    wr.writerow((num, addresse, branche_abbrev, filiere,
         company, description, etudiant, niveau,
-        semestre, sujet, tuteur, done,confidentiel, country, city))
+        semestre, semestre_annee, sujet, tuteur, done,
+        confidentiel, country, city,lat,lng))

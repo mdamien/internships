@@ -18,4 +18,4 @@ if('file' in query){
 }
 console.log("load",file);
 
-React.render(<Loader data_url={"data/"+file+".csv"} />, document.getElementById('content'))
+React.render(<Loader data_url={"../extraction/data/"+file+".csv"} />, document.getElementById('content'))

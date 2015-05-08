@@ -8,7 +8,7 @@ data = details
 
 ######## STAGES.CSV
 
-out = open('../data/stages.csv', 'w', newline='')
+out = open('data/stages.csv', 'w', newline='')
 w = csv.writer(out)
 
 header = list(sorted(data[0].keys()))
@@ -28,7 +28,7 @@ print("stages.csv done")
 
 
 
-out = open('../data/stages_mini.csv', 'w', newline='')
+out = open('data/stages_mini.csv', 'w', newline='')
 w = csv.writer(out)
 
 header = list(sorted(data[0].keys()))
@@ -49,7 +49,7 @@ print("stages_mini.csv done")
 
 
 print('Map csv')
-out = open('../data/stages_coords.csv', 'w', newline='')
+out = open('data/stages_coords.csv', 'w', newline='')
 w = csv.writer(out)
 
 header = 'id,lat,lng,sujet,company,country,semestre_annee,semestre_trimestre,done,niveau_abbrev,branche_abbrev'
