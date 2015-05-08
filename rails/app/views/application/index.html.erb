@@ -1,0 +1,244 @@
+<h3>Bienvenue sur l'interface de consultation des stages effectués à l'UTC.</h3>
+<p>Commencez par utiliser le formulaire ci-dessous pour rechercher les types de stages qui vous intéressent.</p>
+<p>Vous pouvez ensuite utiliser les filtres mis à votre disposition en dessous de chaque titre de colonne dans le tableau pour filtrer les stages dynamiquement.</p>
+
+<!-- Internship dates and branch form. -->
+<div class="row well">
+  <%= form_tag("/", method: "get", class: "form-inline") do %>
+      <div class="form-group col-md-3">
+        <%= label_tag(:from_year, "De", style: "margin-right: 5px;") %>
+        <div class="btn-group" data-toggle="buttons" style="margin-right: 5px;">
+          <label class="btn btn-default btn-sm  <% if params[:from_semester] == "P" %>active<% end %>">
+            <%= radio_button_tag(:from_semester, "P", params[:from_semester] == "P") %>Printemps
+          </label>
+          <label class="btn btn-default btn-sm  <% if params[:from_semester] == "A" %>active<% end %>">
+            <%= radio_button_tag(:from_semester, "A", params[:from_semester] == "A") %>Automne
+          </label>
+        </div>
+        <%= select_tag(:from_year, options_for_select(@years, params[:from_year]), class: "form-control") %>
+      </div>
+      <div class="form-group col-md-3">
+        <%= label_tag(:to_year, "À", style: "margin-right: 5px;") %>
+        <div class="btn-group" data-toggle="buttons" style="margin-right: 5px;">
+          <label class="btn btn-default btn-sm <% if params[:to_semester] == "P" %>active<% end %>">
+            <%= radio_button_tag(:to_semester, "P", params[:to_semester] == "P") %>Printemps
+          </label>
+          <label class="btn btn-default btn-sm <% if params[:to_semester] == "A" %>active<% end %>">
+            <%= radio_button_tag(:to_semester, "A", params[:to_semester] == "A") %>Automne
+          </label>
+        </div>
+        <%= select_tag(:to_year, options_for_select(@years, params[:to_year]), class: "form-control") %>
+      </div>
+      <div class="form-group col-md-2">
+        <%= label_tag(:internship_type, "Stages", style: "margin-right: 5px;") %>
+        <%= select_tag(:internship_type, options_for_select(@internship_types, params[:internship_type]), class: "form-control", id: "internship-type-filter") %>
+      </div>
+      <div id="branch-type-filter" class="form-group col-md-2">
+        <%= label_tag(:branch, "Branche", style: "margin-right: 5px;") %>
+        <%= select_tag(:branch, options_for_select(@all_branches, params[:branch]), class: "form-control") %>
+      </div>
+      <button type="submit" class="col-md-2 btn btn-primary">Rechercher</button>
+  <% end %>
+</div>
+
+<div class="row">
+  <!-- Table containing internships. -->
+  <div class="col-md-9">
+    <% if !@internships.nil? and @internships.any? %>
+    <table class="table table-condensed table-hover">
+      <thead>
+      <tr>
+        <th>Sem.</th>
+        <th>Sujet</th>
+        <th>Entreprise</th>
+        <th>Ville</th>
+        <th>Pays</th>
+      </tr>
+      </thead>
+      <tr>
+        <td></td>
+        <td><div class="form-group has-warning"><input type="text" class="form-control subject" placeholder="Entrez une expression pour filtrer les sujets" autocomplete="off"/></div></td>
+        <td><div class="form-group has-warning"><input data-provide="typeahead" typeahead-search="company" type="text" class="form-control company" placeholder="Filtrer entreprises" autocomplete="off"/></div></td>
+        <td><div class="form-group has-warning"><input data-provide="typeahead" typeahead-search="city" type="text" class="form-control city" placeholder="Ville" autocomplete="off"/></div></td>
+        <td><div class="form-group has-warning"><input data-provide="typeahead" typeahead-search="country" type="text" class="form-control country" placeholder="Pays" autocomplete="off"/></div></td>
+      </tr>
+      <% @internships.each do |internship| %>
+          <tr internship-id="<%= internship.id %>">
+            <!-- Different color for spring and autumn semesters -->
+            <td <% if internship.semester == 'A' %>class="text-success"<% end %>><%= internship.semester %><%= internship.year %></td>
+            <td class="subject"><a href="application/<%= internship.id %>"><%= internship.subject %></a></td>
+            <td class="company"><%= internship.company %></td>
+            <td class="city">Ville</td>
+            <td class="country"><%= internship.country %></td>
+          </tr>
+      <% end %>
+    </table>
+    <% else %>
+        <div class="alert alert-dismissible alert-danger">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          <h4>Pas de résultat.</h4>
+          <p>Aucune entrée ne correspond aux critères de recherche.</p>
+        </div>
+    <% end %>
+  </div>
+
+  <!-- Panel displaying info of the selected internship. Only visible on large screen devices. -->
+  <div class="col-md-3 visible-md visible-lg" id="panel-container">
+    <div class="panel panel-success" data-spy="affix" data-offset-top="80" id="internship-info">
+      <div class="panel-heading">
+        <h3 class="panel-title">Sujet</h3>
+      </div>
+      <div class="panel-body">
+        Description du stage
+      </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    var $internshipInfoPanel = $('#internship-info');
+
+    function resizeInternshipPanelInformation() {
+        $internshipInfoPanel.width($internshipInfoPanel.parent().width());
+    }
+
+    //Setting panel size when page is loaded.
+    resizeInternshipPanelInformation();
+
+    //Resizing panel width when size of the window changes.
+    $(window).resize(function () {
+        resizeInternshipPanelInformation();
+    });
+
+    $('tr[internship-id]').click(function(){
+        var id = $(this).attr('internship-id');
+
+        //Retrieving data of the clicked row
+        $.ajax({
+            url: "/internships/" + id,
+            type: "GET",
+            dataType: "json"
+        }).done(function(data){
+            $internshipInfoPanel.find('.panel-title').text(data.subject)
+            updateInfoPanelContents(data);
+        });
+    });
+
+    /*
+    Update contents of internship information panel based on information retrieved from server.
+     */
+    function updateInfoPanelContents(data){
+        $internshipInfoPanel.find('.panel-body').html(data.description)
+    }
+
+    $rows = $('table tr[internship-id]');
+
+    // When row is click: highlight it. Other rows should not be highlighted.
+    $rows.on('click', function(event) {
+        $(this).addClass('success').siblings().removeClass('success');
+    });
+
+    $filters = $('table input');
+
+    $filters.on("focusout", function () {
+        filterTable()
+    });
+
+    $filters.on("keyup", function (e) {
+        //If user pressed enter key: remove focus, which triggers table filter. (Only if it is not on a typeahead field. If typeahead, enter is only allowed when field is blank.
+        if (e.keyCode == 13) {
+            if (!$(this).attr("data-provide") || !$(this).val()) {
+                $(this).blur();
+            }
+        }
+    });
+
+    function filterTable() {
+        //Determine which filtered contain text entered by user to filter table.
+        var $filtersUsed = $filters.filter(function () {
+            return $.trim(this.value).length > 0;
+        });
+
+        //If user did not input anything, or if field is blank (spaces), return and show everything.
+        if ($filtersUsed.length === 0)
+            return $rows.show();
+
+        //Getting class of the filters used by the user.
+        var $filterClass = '.' + $filtersUsed.map(function () {
+                    return this.className.split(' ')[1];
+                }).get().join(',.');
+
+        //Filtering table. Only filtering td with class that should be filtered.
+        $rows.hide().filter(function () {
+            return $('td', this).filter($filterClass).filter(function () {
+                        var content = this.textContent.toLowerCase();
+                        var inputVal = $filtersUsed.filter('.' + this.className).val().toLowerCase();
+
+                        return content.indexOf(inputVal) > -1;
+
+                    }).length === $filtersUsed.length;
+        }).show();
+    }
+
+    //Branch type filter should be hidden when user does not want to see branch internships.
+    $branchTypeFilter = $('#branch-type-filter');
+    $internshipTypeFilter = $('#internship-type-filter');
+    function manageBranchTypeFilter() {
+        internshipType = $internshipTypeFilter.val();
+        if (internshipType == "all" || internshipType == "tn05") {
+            $branchTypeFilter.children().hide();
+            $branchTypeFilter.find('select').val("all");
+        }
+        else {
+            $branchTypeFilter.children().show();
+        }
+    }
+    manageBranchTypeFilter();
+
+    $internshipTypeFilter.on('change', function(){
+       manageBranchTypeFilter();
+    });
+
+    /*
+    $('input[data-provide="typeahead"]').each(function(){
+        var $this = $(this);
+
+        $this.typeahead({
+            autoSelect: false,
+            afterSelect: function(item){
+                filterTable();
+            },
+            minLength: 2,
+            source: function (query, process) {
+                return $.get('internships/search?search_by=' + $this.attr("typeahead-search") + '&q=' + query, function (data) {
+                    return process(data);
+                });
+            }
+        });
+    });*/
+
+    $internship_data = <%= @internship_data_json.to_json.html_safe %>;
+
+    $('input[data-provide="typeahead"]').each(function(){
+        var $this = $(this);
+
+        $this.typeahead({
+            autoSelect: true,
+            afterSelect: function(item){
+                filterTable();
+            },
+            minLength: 2,
+            displayText: function(item) {
+                return item;
+            },
+            source: function (query, process) {
+                switch ($this.attr("typeahead-search")) {
+                    case "company": return process($internship_data.companies.concat($this.val()));
+                    case "city": return process($internship_data.cities.concat($this.val()));
+                    case "country": return process($internship_data.countries.concat($this.val()));
+                }
+            }
+        });
+    });
+});
+</script>

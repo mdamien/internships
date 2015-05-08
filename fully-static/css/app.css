@@ -1,0 +1,5 @@
+td{
+  overflow: hidden;
+}
+html { overflow: hidden; height: 100%; }
+body { overflow: auto; height: 100%; }
