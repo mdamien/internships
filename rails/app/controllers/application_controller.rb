@@ -5,6 +5,8 @@ class ApplicationController < ActionController::Base
   before_filter CASClient::Frameworks::Rails::Filter
 
   def index
+    @internship_list = true
+
     #Retrieving most recent year data from database by default
     @internships = Internship.search(params)
     @years = Internship.all_internship_years.map { |i| i.year }
@@ -21,7 +23,6 @@ class ApplicationController < ActionController::Base
       @internship_data_json["cities"].add(i.city)
       @internship_data_json["companies"].add(i.company)
     end
-
   end
   
   def view

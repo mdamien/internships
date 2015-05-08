@@ -34,13 +34,16 @@
                 <li><a href="">Apprentissage</a></li>
               </ul>
             </li>
-            <li>
-              <a href="">À propos</a>
-            </li>
             -->
+            <li class="<% if @internship_list %>active<% end %>">
+              <a href="/">Liste des stages</a>
+            </li>
+            <li class="<% if @internship_analytics %>active<% end %>">
+              <a href="analytics">Graphiques</a>
+            </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li><%= link_to("Déconnexion", :action => 'logout') %></li>
+            <li><%= link_to("Déconnexion", :action => 'logout', :controller => 'application') %></li>
           </ul>
         </div>
       </div>

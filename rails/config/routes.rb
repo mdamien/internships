@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
   root 'application#index'
+  get 'analytics' => 'analytics#index'
   get 'application/:id' => 'application#view'
   get 'internships/:id' => 'internships#show', :id => /\d+/, :constraints => {:format => /(json)/}
   get 'internships/search' => 'internships#search_internships', :constraints => {:format => /(json)/}
