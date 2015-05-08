@@ -1,32 +1,27 @@
 class Internship < ActiveRecord::Base
   scope :from_year, -> (year) { where("year >= ?", year) }
   scope :to_year, -> (year) { where("year <= ?", year) }
+  scope :from_semester, -> (from_year, from_semester) { where.not("semester LIKE '%P%' and year = ?", from_year) unless from_semester == 'P' }
+  scope :to_semester, -> (to_year, to_semester) { where.not("semester LIKE '%A%' and year = ?", to_year) unless to_semester == 'A' }
 
-  def self.order_internships(internships)
-    return internships
-               .order(year: :DESC)
-               .order(semester: :DESC)
-               .order(country: :ASC)
-               .order(company: :ASC)
+  def self.order_internships
+    return order(year: :DESC)
+           .order(semester: :DESC)
+           .order(country: :ASC)
+           .order(company: :ASC)
   end
 
   def self.most_recent_internships
     most_recent_year = Internship.maximum("year")
-    return order_internships(Internship.from_year(most_recent_year))
+    return Internship.from_year(most_recent_year).order_internships
   end
 
   def self.search query
     if query.has_key?(:from_year) && query.has_key?(:to_year) && query.has_key?(:from_semester) && query.has_key?(:to_semester) && query.has_key?(:internship_type) && query.has_key?(:branch)
-      internships = from_year(query[:from_year]).to_year(query[:to_year])
-
-      if query[:from_semester] == 'A'
-        #Removing spring internship of from_year.
-        internships = internships.where.not("semester LIKE '%P%' and year = ?", query[:from_year])
-      end
-      if query[:to_semester] == 'P'
-        #Removing fall internship of from_year.
-        internships = internships.where.not("semester LIKE '%A%' and year = ?", query[:to_year])
-      end
+      internships = from_year(query[:from_year])
+                        .to_year(query[:to_year])
+                        .from_semester(query[:from_year], query[:from_semester])
+                        .to_semester(query[:to_year], query[:to_semester])
 
       case query[:internship_type]
         when "tn05"
@@ -47,11 +42,18 @@ class Internship < ActiveRecord::Base
         internships = internships.where("branch LIKE ?", "%"+ branch["search"] + "%")
       end
 
-      return order_internships(internships)
+      return internships.order_internships
     end
 
     # Returning most recent internships if missing parameters.
     return most_recent_internships
+  end
+
+  def self.internship_count_by_semester query
+    internships = search(query)
+    internships = internships.group("year").group("semester").count
+
+    return internships
   end
 
   def self.all_internship_years
