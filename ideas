@@ -3,11 +3,16 @@ VENDREDI: Interface minimal avec recherche (list+map) et graphs
 SAMEDI: Ajout CAS + kink out the big bugs
 DIMANCHE: Publier et ameliorer
 
-
 GOALS: Easy interactions and search through the internships subjets
 
+##########################
+--GOOGLE FOR INTERNSHIPS--
+-with advanced vizu tools-
+##########################
+
+
 Experience:
-- near 0 load time
+- near 0 load time => like Google
 - responsive: results as you type
 - easy url
 

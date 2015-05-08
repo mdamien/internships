@@ -25,6 +25,29 @@ for attrs in data:
 
 print("stages.csv done")
 
+
+
+
+out = open('../data/stages_mini.csv', 'w', newline='')
+w = csv.writer(out)
+
+header = list(sorted(data[0].keys()))
+print(header)
+w.writerow(header)
+
+def get(s, key):
+    if key in ('done','confidentiel'):
+        return 'x' if s[key] else ''
+    return s.get(key)
+
+for attrs in data[:3000]:
+    w.writerow([get(attrs,x) for x in header])
+
+print("stages_mini.csv done")
+
+
+
+
 print('Map csv')
 out = open('../data/stages_coords.csv', 'w', newline='')
 w = csv.writer(out)
