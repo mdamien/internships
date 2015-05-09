@@ -93,4 +93,27 @@ class Internship < ActiveRecord::Base
     }
   end
 
+  def self.all_semesters_ordered
+    semesters_in_database = select(:year).select(:semester).distinct.group("year").group("semester")
+
+    # Sorting semesters (P2XXX is before A2XXX).
+    semesters_in_database = semesters_in_database.sort do |a, b|
+      case
+        when a.year == b.year
+          a.semester == 'P' ? -1 : 1
+        else
+          a.year <=> b.year
+      end
+    end
+
+    # Semesters will be sorted already, as we already sorted the data from the database.
+    semesters = Array.new
+
+    semesters_in_database.each do |s|
+      semesters.push(s.semester + s.year.to_s)
+    end
+
+    return semesters
+  end
+
 end

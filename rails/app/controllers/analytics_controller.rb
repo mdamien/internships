@@ -7,6 +7,9 @@ class AnalyticsController < ApplicationController
     @internship_analytics = true
     @years = Internship.all_internship_years
     @data_internships = Internship.internship_count_by_semester(params)
+
+    @all_semesters = Internship.all_semesters_ordered
+    puts @all_semesters.inspect
   end
 
   def count_by_semester_request
