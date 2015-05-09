@@ -10,6 +10,8 @@ class Internship < ActiveRecord::Base
   scope :city_like, -> (city) { where("city LIKE ?", "%"+ city + "%") }
   scope :filiere_like, -> (filiere) { where("filiere LIKE ?", "%"+ filiere + "%") }
   scope :branch_like, -> (branch) { where("branch LIKE ?", "%"+ branch + "%") }
+  scope :confidential_only, -> { where("confidential = 't'") }
+  scope :exclude_not_done, -> { where("done = 't'") }
 
   def self.order_internships
     return order(year: :DESC)
@@ -24,11 +26,17 @@ class Internship < ActiveRecord::Base
   end
 
   def self.search query
-    if query.has_key?(:from_year) && query.has_key?(:to_year) && query.has_key?(:from_semester) && query.has_key?(:to_semester) && query.has_key?(:internship_type) && query.has_key?(:branch)
-      internships = from_year(query[:from_year])
-                        .to_year(query[:to_year])
-                        .from_semester(query[:from_year], query[:from_semester])
-                        .to_semester(query[:to_year], query[:to_semester])
+    if query.has_key?(:from_semester) && query.has_key?(:to_semester) && query.has_key?(:internship_type) && query.has_key?(:branch)
+
+      from_year = query[:from_semester][1..4].to_i
+      to_year = query[:to_semester][1..4].to_i
+      from_semester = query[:from_semester][0]
+      to_semester = query[:to_semester][0]
+
+      internships = from_year(from_year)
+                        .to_year(to_year)
+                        .from_semester(from_year, from_semester)
+                        .to_semester(to_year, to_semester)
 
       case query[:internship_type]
         when "tn05"
@@ -58,10 +66,9 @@ class Internship < ActiveRecord::Base
   def self.internship_count_by_semester query
     internships = search(query)
 
-    #internships = internships.company_like(query[:company]) if query[:company].present?
-    #internships = internships.country_like(query[:country]) if query[:country].present?
-
-    internships = internships.filter(query.slice(:company_like, :country_like, :city_like, :filiere_like))
+    internships = internships.filter(query.slice(:company_like, :country_like, :city_like, :filiere_like, :done_only))
+    internships = internships.confidential_only if query[:confidential_only].present?
+    internships = internships.exclude_not_done unless query[:include_not_done].present?
     internships = internships.group("year").group("semester").count
 
     return internships
@@ -104,6 +111,10 @@ class Internship < ActiveRecord::Base
     end
 
     return semesters
+  end
+
+  def self.all_countries_ordered_for_select
+    return  select(:country).distinct.order(country: :ASC).map { |c| c.country }
   end
 
 end

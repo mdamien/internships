@@ -5,7 +5,7 @@ class AnalyticsController < ApplicationController
 
   def index
     @internship_analytics = true
-    @years = Internship.all_internship_years
+    @all_countries = Internship.all_countries_ordered_for_select
     @data_internships = Internship.internship_count_by_semester(params)
   end
 
@@ -15,19 +15,16 @@ class AnalyticsController < ApplicationController
 
   protected
 
-  #Default search parameters.
+  # Default search parameters.
   def set_search_query
     @all_semesters = Internship.all_semesters_ordered
     @internship_types = Internship.internship_types
     @all_branches = Internship.all_branches_for_select
-    most_recent_year = Internship.maximum("year")
 
-    #Adding missing parameters by default
-    params[:from_year] ||= most_recent_year
-    params[:to_year] ||= most_recent_year
-    params[:from_semester] ||= "P"
+    # Adding missing parameters by default
+    params[:from_semester] ||= @all_semesters.first()
     params[:to_semester] ||= @all_semesters.first()
     params[:internship_type] ||= @internship_types["Tous"]
-    params[:branch] ||= "Toutes"
+    params[:branch] ||= @all_branches.first()
   end
 end
