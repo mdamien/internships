@@ -9,7 +9,6 @@ class ApplicationController < ActionController::Base
 
     #Retrieving most recent year data from database by default
     @internships = Internship.search(params)
-    @years = Internship.all_internship_years.map { |i| i.year }
 
     #Internship data values in JSON (countries, cities, companies)
     @internship_data_json = {
@@ -37,17 +36,14 @@ class ApplicationController < ActionController::Base
 
   #Default search parameters.
   def set_search_query
+    @all_semesters = Internship.all_semesters_ordered
     @internship_types = Internship.internship_types
-    @all_branches = Hash[Internship.all_branches.map { |id, branch| [branch["name"], id] }]
-    most_recent_year = Internship.maximum("year")
+    @all_branches = Internship.all_branches_for_select
 
-    #Adding missing parameters by default
-    params[:from_year] ||= most_recent_year
-    params[:to_year] ||= most_recent_year
-    params[:from_semester] ||= "P"
-    params[:to_semester] ||= "A"
+    # Adding missing parameters by default
+    params[:from_semester] ||= @all_semesters.first()
+    params[:to_semester] ||= @all_semesters.first()
     params[:internship_type] ||= @internship_types["Tous"]
-    params[:branch] ||= @internship_types["Toutes"]
+    params[:branch] ||= "Toutes"
   end
-
 end

@@ -1,38 +1,69 @@
 <!-- Analytics. -->
-<div class="row well">
-  <%= form_tag("analytics", method: "get", class: "form-inline") do %>
-      <div class="form-group col-md-3">
-        <%= label_tag(:from_year, "De", style: "margin-right: 5px;") %>
-        <div class="btn-group" data-toggle="buttons" style="margin-right: 5px;">
-          <label class="btn btn-default btn-sm  <% if params[:from_semester] == "P" %>active<% end %>">
-            <%= radio_button_tag(:from_semester, "P", params[:from_semester] == "P") %>Printemps
-          </label>
-          <label class="btn btn-default btn-sm  <% if params[:from_semester] == "A" %>active<% end %>">
-            <%= radio_button_tag(:from_semester, "A", params[:from_semester] == "A") %>Automne
-          </label>
+<div class="row">
+  <div class="col-md-3 well">
+    <%= form_tag("analytics", method: "get", class: "form-horizontal") do %>
+        <div class="form-group">
+          <%= label_tag(:from_semester, "De", class: "col-sm-2 control-label") %>
+          <div class="col-sm-10">
+            <%= select_tag(:from_semester, options_for_select(@all_semesters, params[:from_semester]), class: "form-control") %>
+          </div>
         </div>
-
-      </div>
-      <div class="form-group col-md-3">
-        <%= label_tag(:to_year, "À", style: "margin-right: 5px;") %>
-        <div class="btn-group" data-toggle="buttons" style="margin-right: 5px;">
-          <label class="btn btn-default btn-sm <% if params[:to_semester] == "P" %>active<% end %>">
-            <%= radio_button_tag(:to_semester, "P", params[:to_semester] == "P") %>Printemps
-          </label>
-          <label class="btn btn-default btn-sm <% if params[:to_semester] == "A" %>active<% end %>">
-            <%= radio_button_tag(:to_semester, "A", params[:to_semester] == "A") %>Automne
-          </label>
+        <div class="form-group">
+          <%= label_tag(:to_semester, "À", class: "col-sm-2 control-label") %>
+          <div class="col-sm-10">
+            <%= select_tag(:to_semester, options_for_select(@all_semesters, params[:to_semester]), class: "form-control") %>
+          </div>
         </div>
+        <div class="form-group">
+          <%= label_tag(:internship_type, "Stages", class: "col-sm-2 control-label") %>
+          <div class="col-sm-10">
+            <%= select_tag(:internship_type, options_for_select(@internship_types, params[:internship_type]), class: "form-control", id: "internship-type-filter") %>
+          </div>
+        </div>
+        <div id="branch-type-filter" class="form-group">
+          <%= label_tag(:branch, "Branche", class: "col-sm-2 control-label") %>
+          <div class="col-sm-10">
+            <%= select_tag(:branch, options_for_select(@all_branches, params[:branch]), class: "form-control", id: "internship-type-filter") %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= label_tag(:country_like, "Pays", class: "col-sm-2 control-label") %>
+          <div class="col-sm-10">
+            <%= select_tag(:country_like, options_for_select(@all_countries, params[:country_like]), class: "form-control", include_blank: "Tous") %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= label_tag(:company_like, "Entreprise", class: "col-sm-2 control-label") %>
+          <div class="col-sm-10">
+            <%= text_field_tag(:company_like, params[:company_like], placeholder: "Entreprise", class: "form-control") %>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <div class="checkbox">
+              <label>
+                <%= check_box_tag(:confidential_only, "true", params[:confidential_only].present?) %> Stages confidentiels uniquement
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <div class="checkbox">
+              <label>
+                <%= check_box_tag(:include_not_done, "true", params[:include_not_done].present?) %> Inclure sujets n'ayant pas donné lieu à un stage
+              </label>
+            </div>
+          </div>
+        </div>
+        <!-- TODO : Add filiere field -->
+        <button type="submit" class="col-sm-12 btn btn-success">Rechercher</button>
+    <% end %>
+  </div>
+</div>
 
-      </div>
-      <div class="form-group col-md-2">
-        <%= label_tag(:internship_type, "Stages", style: "margin-right: 5px;") %>
-        <%= select_tag(:internship_type, options_for_select(@internship_types, params[:internship_type]), class: "form-control", id: "internship-type-filter") %>
-      </div>
-      <div id="branch-type-filter" class="form-group col-md-2">
-        <%= label_tag(:branch, "Branche", style: "margin-right: 5px;") %>
-        <%= select_tag(:branch, options_for_select(@all_branches, params[:branch]), class: "form-control") %>
-      </div>
-      <button type="submit" class="col-md-2 btn btn-primary">Rechercher</button>
-  <% end %>
+<div class="row">
+  <pre>
+    <%= @data_internships.as_json %>
+  </pre>
 </div>

@@ -5,29 +5,13 @@
 <!-- Internship dates and branch form. -->
 <div class="row well">
   <%= form_tag("/", method: "get", class: "form-inline") do %>
-      <div class="form-group col-md-3">
-        <%= label_tag(:from_year, "De", style: "margin-right: 5px;") %>
-        <div class="btn-group" data-toggle="buttons" style="margin-right: 5px;">
-          <label class="btn btn-default btn-sm  <% if params[:from_semester] == "P" %>active<% end %>">
-            <%= radio_button_tag(:from_semester, "P", params[:from_semester] == "P") %>Printemps
-          </label>
-          <label class="btn btn-default btn-sm  <% if params[:from_semester] == "A" %>active<% end %>">
-            <%= radio_button_tag(:from_semester, "A", params[:from_semester] == "A") %>Automne
-          </label>
-        </div>
-        <%= select_tag(:from_year, options_for_select(@years, params[:from_year]), class: "form-control") %>
+      <div class="form-group col-md-2">
+        <%= label_tag(:from_semester, "De", style: "margin-right: 5px;") %>
+        <%= select_tag(:from_semester, options_for_select(@all_semesters, params[:from_semester]), class: "form-control") %>
       </div>
-      <div class="form-group col-md-3">
-        <%= label_tag(:to_year, "À", style: "margin-right: 5px;") %>
-        <div class="btn-group" data-toggle="buttons" style="margin-right: 5px;">
-          <label class="btn btn-default btn-sm <% if params[:to_semester] == "P" %>active<% end %>">
-            <%= radio_button_tag(:to_semester, "P", params[:to_semester] == "P") %>Printemps
-          </label>
-          <label class="btn btn-default btn-sm <% if params[:to_semester] == "A" %>active<% end %>">
-            <%= radio_button_tag(:to_semester, "A", params[:to_semester] == "A") %>Automne
-          </label>
-        </div>
-        <%= select_tag(:to_year, options_for_select(@years, params[:to_year]), class: "form-control") %>
+      <div class="form-group col-md-2">
+        <%= label_tag(:to_semester, "À", style: "margin-right: 5px;") %>
+        <%= select_tag(:to_semester, options_for_select(@all_semesters, params[:to_semester]), class: "form-control") %>
       </div>
       <div class="form-group col-md-2">
         <%= label_tag(:internship_type, "Stages", style: "margin-right: 5px;") %>
@@ -187,7 +171,7 @@ $(document).ready(function() {
         internshipType = $internshipTypeFilter.val();
         if (internshipType == "all" || internshipType == "tn05") {
             $branchTypeFilter.children().hide();
-            $branchTypeFilter.find('select').val("all");
+            $branchTypeFilter.find('select').val("Toutes");
         }
         else {
             $branchTypeFilter.children().show();

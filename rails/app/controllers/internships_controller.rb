@@ -11,8 +11,6 @@ before_action :set_internship, only: [:show]
     if !params[:search_by].blank? and !params[:q].blank?
       if !["company", "country", "city"].include? params[:search_by]
         return
-      else
-
       end
     else
       return
