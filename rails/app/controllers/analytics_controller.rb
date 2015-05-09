@@ -1,10 +1,15 @@
 class AnalyticsController < ApplicationController
 
   protect_from_forgery with: :exception
-  before_filter :set_search_query, :only => [:index]
+  before_filter :set_search_query, :only => [:index, :count_by_semester_request]
 
   def index
     @internship_analytics = true
+    @years = Internship.all_internship_years
+    @data_internships = Internship.internship_count_by_semester(params)
+  end
+
+  def count_by_semester_request
     @data_internships = Internship.internship_count_by_semester(params)
   end
 
@@ -13,7 +18,7 @@ class AnalyticsController < ApplicationController
   #Default search parameters.
   def set_search_query
     @internship_types = Internship.internship_types
-    @all_branches = Hash[Internship.all_branches.map { |id, branch| [branch["name"], id] }]
+    @all_branches = Internship.all_branches_for_select
     most_recent_year = Internship.maximum("year")
 
     #Adding missing parameters by default
@@ -22,6 +27,6 @@ class AnalyticsController < ApplicationController
     params[:from_semester] ||= "P"
     params[:to_semester] ||= "A"
     params[:internship_type] ||= @internship_types["Tous"]
-    params[:branch] ||= @internship_types["Toutes"]
+    params[:branch] ||= "Toutes"
   end
 end

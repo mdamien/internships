@@ -1,0 +1,1 @@
+json.array! @data_internships

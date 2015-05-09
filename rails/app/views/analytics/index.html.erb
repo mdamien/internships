@@ -1,38 +1,45 @@
 <!-- Analytics. -->
-<div class="row well">
-  <%= form_tag("analytics", method: "get", class: "form-inline") do %>
-      <div class="form-group col-md-3">
-        <%= label_tag(:from_year, "De", style: "margin-right: 5px;") %>
-        <div class="btn-group" data-toggle="buttons" style="margin-right: 5px;">
-          <label class="btn btn-default btn-sm  <% if params[:from_semester] == "P" %>active<% end %>">
-            <%= radio_button_tag(:from_semester, "P", params[:from_semester] == "P") %>Printemps
-          </label>
-          <label class="btn btn-default btn-sm  <% if params[:from_semester] == "A" %>active<% end %>">
-            <%= radio_button_tag(:from_semester, "A", params[:from_semester] == "A") %>Automne
-          </label>
+<div class="row">
+  <div class="col-md-3 well">
+    <%= form_tag("analytics", method: "get") do %>
+        <div class="row">
+          <div class="form-group col-sm-8">
+            <%= label_tag(:from_year, "De", style: "margin-right: 5px;") %>
+            <div class="btn-group" data-toggle="buttons" style="margin-right: 5px;">
+              <label class="btn btn-default btn-xs  <% if params[:from_semester] == "P" %>active<% end %>">
+                <%= radio_button_tag(:from_semester, "P", params[:from_semester] == "P") %>Printemps
+              </label>
+              <label class="btn btn-default btn-xs  <% if params[:from_semester] == "A" %>active<% end %>">
+                <%= radio_button_tag(:from_semester, "A", params[:from_semester] == "A") %>Automne
+              </label>
+            </div>
+          </div>
+          <div class="form-group col-sm-4">
+            <%= select_tag(:from_year, options_for_select(["2012"], params[:from_year]), class: "form-control") %>
+          </div>
         </div>
 
-      </div>
-      <div class="form-group col-md-3">
-        <%= label_tag(:to_year, "À", style: "margin-right: 5px;") %>
-        <div class="btn-group" data-toggle="buttons" style="margin-right: 5px;">
-          <label class="btn btn-default btn-sm <% if params[:to_semester] == "P" %>active<% end %>">
-            <%= radio_button_tag(:to_semester, "P", params[:to_semester] == "P") %>Printemps
-          </label>
-          <label class="btn btn-default btn-sm <% if params[:to_semester] == "A" %>active<% end %>">
-            <%= radio_button_tag(:to_semester, "A", params[:to_semester] == "A") %>Automne
-          </label>
-        </div>
+        <div class="form-group">
+          <%= label_tag(:to_year, "À", style: "margin-right: 5px;") %>
+          <div class="btn-group" data-toggle="buttons" style="margin-right: 5px;">
+            <label class="btn btn-default btn-xs <% if params[:to_semester] == "P" %>active<% end %>">
+              <%= radio_button_tag(:to_semester, "P", params[:to_semester] == "P") %>Printemps
+            </label>
+            <label class="btn btn-default btn-xs <% if params[:to_semester] == "A" %>active<% end %>">
+              <%= radio_button_tag(:to_semester, "A", params[:to_semester] == "A") %>Automne
+            </label>
+          </div>
 
-      </div>
-      <div class="form-group col-md-2">
-        <%= label_tag(:internship_type, "Stages", style: "margin-right: 5px;") %>
-        <%= select_tag(:internship_type, options_for_select(@internship_types, params[:internship_type]), class: "form-control", id: "internship-type-filter") %>
-      </div>
-      <div id="branch-type-filter" class="form-group col-md-2">
-        <%= label_tag(:branch, "Branche", style: "margin-right: 5px;") %>
-        <%= select_tag(:branch, options_for_select(@all_branches, params[:branch]), class: "form-control") %>
-      </div>
-      <button type="submit" class="col-md-2 btn btn-primary">Rechercher</button>
-  <% end %>
+        </div>
+        <div class="form-group">
+          <%= label_tag(:internship_type, "Stages", style: "margin-right: 5px;") %>
+          <%= select_tag(:internship_type, options_for_select(@internship_types, params[:internship_type]), class: "form-control", id: "internship-type-filter") %>
+        </div>
+        <div id="branch-type-filter" class="form-group">
+          <%= label_tag(:branch, "Branche", style: "margin-right: 5px;") %>
+          <%= select_tag(:branch, options_for_select(@all_branches, params[:branch]), class: "form-control") %>
+        </div>
+        <button type="submit" class="col-sm-12 btn btn-success">Rechercher</button>
+    <% end %>
+  </div>
 </div>
