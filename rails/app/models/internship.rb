@@ -13,7 +13,7 @@ class Internship < ActiveRecord::Base
 
   def self.order_internships
     return order(year: :DESC)
-           .order(semester: :DESC)
+           .order(semester: :ASC)
            .order(country: :ASC)
            .order(company: :ASC)
   end
