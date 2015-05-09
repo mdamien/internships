@@ -9,6 +9,7 @@ class Internship < ActiveRecord::Base
   scope :country_like, -> (country) { where("country LIKE ?", "%"+ country + "%") }
   scope :city_like, -> (city) { where("city LIKE ?", "%"+ city + "%") }
   scope :filiere_like, -> (filiere) { where("filiere LIKE ?", "%"+ filiere + "%") }
+  scope :branch_like, -> (branch) { where("branch LIKE ?", "%"+ branch + "%") }
 
   def self.order_internships
     return order(year: :DESC)
@@ -43,9 +44,8 @@ class Internship < ActiveRecord::Base
       end
 
       # Branch filter if internship type is not tn05 or not all internships.
-      branch = Internship.all_branches[query[:branch]]
-      if !branch.nil? && branch.has_key?("search") && (query[:internship_type] != "tn05" || query[:internship_type] != "all")
-        internships = internships.where("branch LIKE ?", "%"+ branch["search"] + "%")
+      if (query[:internship_type] != "tn05" || query[:internship_type] != "all") && query[:branch] != "Toutes"
+        internships = internships.branch_like(query[:branch])
       end
 
       return internships.order_internships
@@ -71,6 +71,17 @@ class Internship < ActiveRecord::Base
     return select(:year).distinct.order(year: :ASC)
   end
 
+  def self.all_branches
+    return select(:branch).distinct.order(branch: :ASC)
+  end
+
+  def self.all_branches_for_select
+    branches = self.all_branches.map { |b| b.branch }
+    branches.unshift("Toutes")
+
+    return branches
+  end
+
   def self.internship_types
     return {
         "Tous" => "all",
@@ -82,35 +93,4 @@ class Internship < ActiveRecord::Base
     }
   end
 
-  def self.all_branches
-    return {
-        "all" => {
-            "name" => "Toutes"
-        },
-        "gb" => {
-            "name" => "GB",
-            "search" => "Biologique"
-        },
-        "gi" => {
-            "name" => "GI",
-            "search" => "Informatique"
-        },
-        "gm" => {
-            "name" => "GM",
-            "search" => "Génie Mécanique"
-        },
-        "gp" => {
-            "name" => "GP",
-            "search" => "des Procédés"
-        },
-        "gsm" => {
-            "name" => "GSM",
-            "search" => "Systèmes Mécaniques"
-        },
-        "gsu" => {
-            "name" => "GSU",
-            "search" => "Urbains"
-        }
-    }
-  end
 end

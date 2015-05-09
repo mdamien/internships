@@ -38,7 +38,7 @@ class ApplicationController < ActionController::Base
   #Default search parameters.
   def set_search_query
     @internship_types = Internship.internship_types
-    @all_branches = Hash[Internship.all_branches.map { |id, branch| [branch["name"], id] }]
+    @all_branches = Internship.all_branches_for_select
     most_recent_year = Internship.maximum("year")
 
     #Adding missing parameters by default
@@ -47,7 +47,7 @@ class ApplicationController < ActionController::Base
     params[:from_semester] ||= "P"
     params[:to_semester] ||= "A"
     params[:internship_type] ||= @internship_types["Tous"]
-    params[:branch] ||= @internship_types["Toutes"]
+    params[:branch] ||= "Toutes"
   end
 
 end

@@ -24,9 +24,13 @@ ActiveRecord::Schema.define(version: 20150211131503) do
     t.string  "semester"
     t.integer "year"
     t.string  "teacher"
-    t.integer "zipcode"
     t.string  "city"
     t.string  "country"
+    t.string  "filiere"
+    t.float   "latitude"
+    t.float   "longitude"
+    t.boolean "done"
+    t.boolean "confidential"
   end
 
 end
