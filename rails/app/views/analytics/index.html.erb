@@ -20,16 +20,8 @@
         </div>
 
         <div class="form-group">
-          <%= label_tag(:to_year, "À", style: "margin-right: 5px;") %>
-          <div class="btn-group" data-toggle="buttons" style="margin-right: 5px;">
-            <label class="btn btn-default btn-xs <% if params[:to_semester] == "P" %>active<% end %>">
-              <%= radio_button_tag(:to_semester, "P", params[:to_semester] == "P") %>Printemps
-            </label>
-            <label class="btn btn-default btn-xs <% if params[:to_semester] == "A" %>active<% end %>">
-              <%= radio_button_tag(:to_semester, "A", params[:to_semester] == "A") %>Automne
-            </label>
-          </div>
-
+          <%= label_tag(:to_semester, "Stages", style: "margin-right: 5px;") %>
+          <%= select_tag(:to_semester, options_for_select(@all_semesters, params[:to_semester]), class: "form-control") %>
         </div>
         <div class="form-group">
           <%= label_tag(:internship_type, "Stages", style: "margin-right: 5px;") %>

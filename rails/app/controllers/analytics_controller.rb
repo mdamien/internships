@@ -7,9 +7,6 @@ class AnalyticsController < ApplicationController
     @internship_analytics = true
     @years = Internship.all_internship_years
     @data_internships = Internship.internship_count_by_semester(params)
-
-    @all_semesters = Internship.all_semesters_ordered
-    puts @all_semesters.inspect
   end
 
   def count_by_semester_request
@@ -20,6 +17,7 @@ class AnalyticsController < ApplicationController
 
   #Default search parameters.
   def set_search_query
+    @all_semesters = Internship.all_semesters_ordered
     @internship_types = Internship.internship_types
     @all_branches = Internship.all_branches_for_select
     most_recent_year = Internship.maximum("year")
@@ -28,7 +26,7 @@ class AnalyticsController < ApplicationController
     params[:from_year] ||= most_recent_year
     params[:to_year] ||= most_recent_year
     params[:from_semester] ||= "P"
-    params[:to_semester] ||= "A"
+    params[:to_semester] ||= @all_semesters.first()
     params[:internship_type] ||= @internship_types["Tous"]
     params[:branch] ||= "Toutes"
   end
