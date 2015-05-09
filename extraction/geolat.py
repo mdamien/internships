@@ -6,7 +6,7 @@ addrs = collections.Counter([s['addresse'] for s in stages])
 addrs = list(addrs.items())
 random.shuffle(addrs)
 
-geocoded = json.load(open('data/geocoded_cold.json'))
+geocoded = json.load(open('data/geocoded.json'))
 
 def google(addr):
     url = "https://maps.googleapis.com/maps/api/geocode/json"
