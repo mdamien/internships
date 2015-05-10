@@ -3,7 +3,7 @@ import geolat2
 
 stages = json.load(open('data/details.json'))
 basics = json.load(open('data/basics.json'))
-geocoded = json.load(open('data/geocoded_cold.json'))
+geocoded = json.load(open('data/geocoded.json'))
 geocoded_simple = json.load(open('data/geocoded3_cold.json'))
 
 print('files loaded')
@@ -55,14 +55,17 @@ for stage in basics:
 
     #add branch, niveau, semester, filiere,...
     branche_abbrev = ""
+    filiere = ""
     if 'branche' in stage:
         bl = stage['branche'].lower()
         if bl.startswith('inform') \
             or bl.startswith('Ingénierie des Services et des Systèmes'.lower()) \
             or bl.startswith("Sciences et Technologies de l'Information".lower()):
             branche_abbrev = "GI"
+        elif bl.startswith('Mécanique, Option Génie des Systèmes Mécaniques'.lower()):
+            branche_abbrev = "GSM"
         elif bl.startswith('mécan'):
-            branche_abbrev = "GM/GSM"
+            branche_abbrev = "GM"
         elif bl.startswith('tronc'):
             branche_abbrev = "TC"
         elif bl.startswith('génie biologique'):
@@ -81,6 +84,10 @@ for stage in basics:
         else:
             branche_abbrev = "autre"
             print("branche inconnue:", n,stage['branche'][:50])
+
+        splitted = stage['branche'].split('filière',2)
+        if len(splitted) > 1:
+            filiere = splitted[-1].strip()
 
     niveau_abbrev = ""
     if 'niveau' in stage:
@@ -104,8 +111,11 @@ for stage in basics:
         else:
             niveau_abbrev = "autre"
             print("niveau inconnu:", n,stage['niveau'][:30],)
+
     stage['branche_abbrev'] = branche_abbrev
     stage['niveau_abbrev'] = niveau_abbrev
+
+    stage['filiere'] = filiere
 
     stage['sujet'] = stage['title']
     stage.pop('title',None)
