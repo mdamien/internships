@@ -183,24 +183,6 @@ $(document).ready(function() {
        manageBranchTypeFilter();
     });
 
-    /*
-    $('input[data-provide="typeahead"]').each(function(){
-        var $this = $(this);
-
-        $this.typeahead({
-            autoSelect: false,
-            afterSelect: function(item){
-                filterTable();
-            },
-            minLength: 2,
-            source: function (query, process) {
-                return $.get('internships/search?search_by=' + $this.attr("typeahead-search") + '&q=' + query, function (data) {
-                    return process(data);
-                });
-            }
-        });
-    });*/
-
     $internship_data = <%= @internship_data_json.to_json.html_safe %>;
 
     $('input[data-provide="typeahead"]').each(function(){
