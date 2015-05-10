@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
     @internship_list = true
 
     #Retrieving most recent year data from database by default
-    @internships = Internship.search(params)
+    @internships = Internship.search(params).order_internships_for_table
 
     #Internship data values in JSON (countries, cities, companies)
     @internship_data_json = {

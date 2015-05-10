@@ -13,7 +13,10 @@ class Internship < ActiveRecord::Base
   scope :confidential_only, -> { where("confidential = 't'") }
   scope :exclude_not_done, -> { where("done = 't'") }
 
-  def self.order_internships
+  scope :order_by_semester_desc, -> { order(year: :DESC).order(semester: :ASC) }
+  scope :order_by_semester_asc, -> { order(year: :ASC).order(semester: :DESC) }
+
+  def self.order_internships_for_table
     return order(year: :DESC)
            .order(semester: :ASC)
            .order(country: :ASC)
@@ -22,7 +25,7 @@ class Internship < ActiveRecord::Base
 
   def self.most_recent_internships
     most_recent_year = Internship.maximum("year")
-    return Internship.from_year(most_recent_year).order_internships
+    return Internship.from_year(most_recent_year)
   end
 
   def self.search query
@@ -56,7 +59,7 @@ class Internship < ActiveRecord::Base
         internships = internships.branch_like(query[:branch])
       end
 
-      return internships.order_internships
+      return internships
     end
 
     # Returning most recent internships if missing parameters.
@@ -69,7 +72,12 @@ class Internship < ActiveRecord::Base
     internships = internships.filter(query.slice(:company_like, :country_like, :city_like, :filiere_like, :done_only))
     internships = internships.confidential_only if query[:confidential_only].present?
     internships = internships.exclude_not_done unless query[:include_not_done].present?
-    internships = internships.group("year").group("semester").count
+    internships = internships
+                      .group("year")
+                      .group("semester")
+                      .group("branch")
+                      .order_by_semester_asc
+                      .count
 
     return internships
   end
@@ -101,7 +109,7 @@ class Internship < ActiveRecord::Base
   end
 
   def self.all_semesters_ordered
-    semesters_in_database = select(:year).select(:semester).distinct.group("year").group("semester").order(year: :DESC).order(semester: :ASC)
+    semesters_in_database = select(:year).select(:semester).distinct.group("year").group("semester").order_by_semester_desc
 
     # Semesters will be sorted already, as we already sorted the data from the database.
     semesters = Array.new
