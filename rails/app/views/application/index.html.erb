@@ -52,7 +52,7 @@
             <td <% if internship.semester == 'A' %>class="text-success"<% end %>><%= internship.semester %><%= internship.year %></td>
             <td class="subject"><a href="application/<%= internship.id %>"><%= internship.subject %></a></td>
             <td class="company"><%= internship.company %></td>
-            <td class="city">Ville</td>
+            <td class="city"><%= internship.city %></td>
             <td class="country"><%= internship.country %></td>
           </tr>
       <% end %>
