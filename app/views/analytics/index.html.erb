@@ -1,38 +1,187 @@
 <!-- Analytics. -->
-<div class="row well">
-  <%= form_tag("analytics", method: "get", class: "form-inline") do %>
-      <div class="form-group col-md-3">
-        <%= label_tag(:from_year, "De", style: "margin-right: 5px;") %>
-        <div class="btn-group" data-toggle="buttons" style="margin-right: 5px;">
-          <label class="btn btn-default btn-sm  <% if params[:from_semester] == "P" %>active<% end %>">
-            <%= radio_button_tag(:from_semester, "P", params[:from_semester] == "P") %>Printemps
-          </label>
-          <label class="btn btn-default btn-sm  <% if params[:from_semester] == "A" %>active<% end %>">
-            <%= radio_button_tag(:from_semester, "A", params[:from_semester] == "A") %>Automne
-          </label>
+<div class="row">
+  <div class="col-md-3 well">
+    <b>Critères de recherche de stages</b>
+    <%= form_tag("analytics", method: "get", class: "form-horizontal") do %>
+        <div class="form-group">
+          <%= label_tag(:from_semester, "De", class: "col-sm-2 control-label") %>
+          <div class="col-sm-10">
+            <%= select_tag(:from_semester, options_for_select(@all_semesters, params[:from_semester]), class: "form-control") %>
+          </div>
         </div>
-
-      </div>
-      <div class="form-group col-md-3">
-        <%= label_tag(:to_year, "À", style: "margin-right: 5px;") %>
-        <div class="btn-group" data-toggle="buttons" style="margin-right: 5px;">
-          <label class="btn btn-default btn-sm <% if params[:to_semester] == "P" %>active<% end %>">
-            <%= radio_button_tag(:to_semester, "P", params[:to_semester] == "P") %>Printemps
-          </label>
-          <label class="btn btn-default btn-sm <% if params[:to_semester] == "A" %>active<% end %>">
-            <%= radio_button_tag(:to_semester, "A", params[:to_semester] == "A") %>Automne
-          </label>
+        <div class="form-group">
+          <%= label_tag(:to_semester, "À", class: "col-sm-2 control-label") %>
+          <div class="col-sm-10">
+            <%= select_tag(:to_semester, options_for_select(@all_semesters, params[:to_semester]), class: "form-control") %>
+          </div>
         </div>
-
-      </div>
-      <div class="form-group col-md-2">
-        <%= label_tag(:internship_type, "Stages", style: "margin-right: 5px;") %>
-        <%= select_tag(:internship_type, options_for_select(@internship_types, params[:internship_type]), class: "form-control", id: "internship-type-filter") %>
-      </div>
-      <div id="branch-type-filter" class="form-group col-md-2">
-        <%= label_tag(:branch, "Branche", style: "margin-right: 5px;") %>
-        <%= select_tag(:branch, options_for_select(@all_branches, params[:branch]), class: "form-control") %>
-      </div>
-      <button type="submit" class="col-md-2 btn btn-primary">Rechercher</button>
-  <% end %>
+        <div class="form-group">
+          <%= label_tag(:internship_type, "Stages", class: "col-sm-2 control-label") %>
+          <div class="col-sm-10">
+            <%= select_tag(:internship_type, options_for_select(@internship_types, params[:internship_type]), class: "form-control", id: "internship-type-filter") %>
+          </div>
+        </div>
+        <div id="branch-type-filter" class="form-group">
+          <%= label_tag(:branch, "Branche", class: "col-sm-2 control-label") %>
+          <div class="col-sm-10">
+            <%= select_tag(:branch, options_for_select(@all_branches, params[:branch]), class: "form-control", id: "internship-type-filter") %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= label_tag(:country_like, "Pays", class: "col-sm-2 control-label") %>
+          <div class="col-sm-10">
+            <%= select_tag(:country_like, options_for_select(@all_countries, params[:country_like]), class: "form-control", include_blank: "Tous") %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= label_tag(:company_like, "Entreprise", class: "col-sm-2 control-label") %>
+          <div class="col-sm-10">
+            <%= text_field_tag(:company_like, params[:company_like], placeholder: "Entreprise", class: "form-control") %>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <div class="checkbox">
+              <label>
+                <%= check_box_tag(:confidential_only, "true", params[:confidential_only].present?) %> Stages confidentiels uniquement
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <div class="checkbox">
+              <label>
+                <%= check_box_tag(:include_not_done, "true", params[:include_not_done].present?) %> Inclure sujets n'ayant pas donné lieu à un stage
+              </label>
+            </div>
+          </div>
+        </div>
+        <!-- TODO : Add filiere field -->
+        <button type="submit" class="col-sm-12 btn btn-success">Rechercher</button>
+    <% end %>
+  </div>
+  <div class="col-md-9">
+    <h4>Analyses sur les stages</h4>
+    <p>Utilisez le formulaire à votre gauche pour afficher le nombre de stages par semestre par branche, en fonction de divers critères.
+      <br/>En cliquant sur "Rechercher", le graphique ci-dessous se mettra à jour avec les nouveaux critères sélectionnés.
+    </p>
+    <div id="container"/>
+  </div>
 </div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <pre>
+        <%= @data_internships.to_json.html_safe %>
+    </pre>
+  </div>
+</div>
+
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+<script type="application/javascript">
+    $(document).ready(function() {
+        $internship_data = <%= @data_internships.to_json.html_safe %>;
+
+        categoriesFromData = function ($data) {
+            $semesters = [];
+            Object.keys($data).forEach(function(s) {
+                $semesters.push(s);
+            });
+
+            return $semesters;
+        };
+
+        seriesFromData = function ($data) {
+            $countByBranch = [];
+            $branches = {};
+
+            Object.keys($data).forEach(function(s) {
+                Object.keys($data[s]).forEach(function(branch) {
+                    if (!$branches.hasOwnProperty(branch)) {
+                        $countByBranch.push({
+                            "name": branch,
+                            "data": []
+                        });
+
+                        $branches[branch] = $countByBranch[$countByBranch.length - 1]["data"];
+                    }
+                });
+            });
+
+            // Adding data for each branch for each semester
+            Object.keys($data).forEach(function(s) {
+                Object.keys($branches).forEach(function(branch) {
+                    if (branch in $data[s]) {
+                        $branches[branch].push($data[s][branch]);
+                    }
+                    else {
+                        $branches[branch].push(0);
+                    }
+                });
+            });
+
+            return $countByBranch;
+        };
+
+        $('#container').highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Nombre de stages par branche par semestre'
+            },
+            xAxis: {
+                categories: categoriesFromData($internship_data)
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Nombre total de stages'
+                },
+                stackLabels: {
+                    enabled: true,
+                    style: {
+                        fontWeight: 'bold',
+                        color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                    }
+                }
+            },
+            legend: {
+                align: 'right',
+                x: -30,
+                verticalAlign: 'top',
+                y: 25,
+                floating: true,
+                backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+                borderColor: '#CCC',
+                borderWidth: 1,
+                shadow: false
+            },
+            tooltip: {
+                formatter: function () {
+                    return '<b>' + this.x + '</b><br/>' +
+                            this.series.name + ': ' + this.y + '<br/>' +
+                            'Total: ' + this.point.stackTotal;
+                }
+            },
+            plotOptions: {
+                column: {
+                    stacking: 'normal',
+                    dataLabels: {
+                        enabled: true,
+                        color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                        style: {
+                            textShadow: '0 0 3px black'
+                        }
+                    }
+                }
+            },
+            series: seriesFromData($internship_data)
+        });
+    });
+
+</script>
+
