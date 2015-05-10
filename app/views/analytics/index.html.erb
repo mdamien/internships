@@ -78,9 +78,7 @@
   </div>
 </div>
 
-<script src="http://code.highcharts.com/highcharts.js"></script>
-<script src="http://code.highcharts.com/modules/exporting.js"></script>
-
+<%= javascript_include_tag 'analytics.js', 'data-turbolinks-track' => true %>
 <script type="application/javascript">
     $(document).ready(function() {
         $internship_data = <%= @data_internships.to_json.html_safe %>;
