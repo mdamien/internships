@@ -125,4 +125,23 @@ class Internship < ActiveRecord::Base
     return  select(:country).distinct.order(country: :ASC).map { |c| c.country }
   end
 
+  def self.all_cities_grouped_by_country_for_select
+    cities = select(:country)
+        .select(:city)
+        .distinct
+        .order(country: :ASC)
+        .order(city: :ASC)
+
+    cities_data = Hash.new
+
+    cities.each do |c|
+      if cities_data.has_key?(c.country)
+        cities_data[c.country].push(c.city)
+      else
+        cities_data[c.country] = [c.city]
+      end
+    end
+
+    return cities_data
+  end
 end

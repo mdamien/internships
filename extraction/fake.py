@@ -2,6 +2,7 @@
 
 import csv
 
+from sets import Set
 from faker import Faker
 fake = Faker(locale="fr_FR")
 #fake.seed(42)
@@ -11,6 +12,18 @@ wr = csv.writer(myfile)
 wr.writerow([x.strip() for x in "num, addresse, branche_abbrev, filiere," \
         "company, description, etudiant, niveau," \
         "semestre, semestre_annee, sujet, tuteur, done,confidentiel, country, city,lat,lng".split(',')])
+
+cities = set(["Paris"])
+while len(cities) < 25:
+    city = fake.city()
+    cities.add(city)
+
+
+countries = set(["FRANCE"])
+while len(countries) < 15:
+    country = fake.country().upper()
+    countries.add(country)
+
 for i in range(20000):
     num = i #PK : can't be random (no duplicates allowed)
     addresse = fake.street_address()+"\n"+str(fake.random_int(min=0, max=7000)) \
@@ -23,8 +36,8 @@ for i in range(20000):
     description = fake.text()
     etudiant = fake.name()
     niveau = fake.random_element(('assistant',u"projet de fin d\'étude",'stage ouvrier', 'apprentissage', 'interculturel'))
-    country = fake.country().upper()
-    city = fake.city()
+    country = fake.random_element(countries)
+    city = fake.random_element(cities)
     semestre = fake.random_element(('A','P'))
     semestre_annee = str(fake.random_int(min=2002, max=2015))
     sujet = fake.sentence(nb_words=6, variable_nb_words=True)
