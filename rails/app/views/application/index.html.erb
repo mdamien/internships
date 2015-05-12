@@ -164,25 +164,6 @@ $(document).ready(function() {
         }).show();
     }
 
-    //Branch type filter should be hidden when user does not want to see branch internships.
-    $branchTypeFilter = $('#branch-type-filter');
-    $internshipTypeFilter = $('#internship-type-filter');
-    function manageBranchTypeFilter() {
-        internshipType = $internshipTypeFilter.val();
-        if (internshipType == "all" || internshipType == "tn05") {
-            $branchTypeFilter.children().hide();
-            $branchTypeFilter.find('select').val("");
-        }
-        else {
-            $branchTypeFilter.children().show();
-        }
-    }
-    manageBranchTypeFilter();
-
-    $internshipTypeFilter.on('change', function(){
-       manageBranchTypeFilter();
-    });
-
     $internship_data = <%= @internship_data_json.to_json.html_safe %>;
 
     $('input[data-provide="typeahead"]').each(function(){
