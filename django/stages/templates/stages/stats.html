@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Stats{% endblock %}
+
+{% block extra_head %}
+<script type="text/javascript" src='{% static "libs/jq.js" %}'></script> 
+<script src="http://code.highcharts.com/highcharts.js"></script>
+{% endblock %}
+
+{% block content %}
+    <h4>Stats</h4>
+
+<pre>
+{{stats_semesters}}
+</pre>
+
+<div id="chart" style="width:100%; height:400px;"></div>
+<hr/>
+<div id="chart2" style="width:100%; height:400px;"></div>
+
+<script>
+var raw_data = {{stats_semesters|safe}}
+$(function () { 
+    var series = [{
+            name: 'Sujets',
+            data: raw_data.all
+        }, {
+            name: 'Stages',
+            data: raw_data.done
+        }]
+    var series2 = []
+    for(key in raw_data.branches){
+        series2.push({
+            name:key,
+            data:raw_data.branches[key],
+        })
+    }
+
+    $('#chart').highcharts({
+        plotOptions: {
+            series: {
+                animation: false
+            }
+        },
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'Stages par semestre',
+        },
+        xAxis: {
+            categories: raw_data.semesters,
+            title: {
+                text: 'Semestre'
+            },
+        },
+        yAxis: {
+            min:0,
+            title: {
+                text: ''
+            },
+        },
+        series: series,
+    });
+
+    $('#chart2').highcharts({
+        plotOptions: {
+            series: {
+                animation: false
+            }
+        },
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'Stages par semestre',
+        },
+        xAxis: {
+            categories: raw_data.semesters,
+            title: {
+                text: 'Semestre'
+            },
+        },
+        yAxis: {
+            min:0,
+            title: {
+                text: ''
+            },
+        },
+        series: series2,
+    });
+});
+
+</script>
+{% endblock %}
