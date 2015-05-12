@@ -9,7 +9,6 @@ class AnalyticsController < ApplicationController
     data_internships = Internship.internship_count_by_semester(params)
     @data_internships = format_internship_data(data_internships)
     @all_cities_grouped_by_countries = Internship.all_cities_grouped_by_country_for_select
-    puts @all_cities_grouped_by_countries.inspect
   end
 
   def count_by_semester_request
