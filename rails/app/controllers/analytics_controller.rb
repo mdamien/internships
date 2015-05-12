@@ -18,6 +18,10 @@ class AnalyticsController < ApplicationController
     @data_internships = Internship.internship_count_by_semester(params)
   end
 
+  def top_companies
+
+  end
+
   protected
 
   # data input is like this: [2010, "P", "GI"]: 53, [2010, "P", "GB"]: 58

@@ -2,6 +2,7 @@ Rails.application.routes.draw do
 
   root 'application#index'
   get 'analytics' => 'analytics#index'
+  get 'analytics/top-companies' => 'analytics#top_companies'
   get 'analytics/countBySemester' => 'analytics#count_by_semester_request', :constraints => {:format => /(json)/}
   get 'application/:id' => 'application#view'
   get 'internships/:id' => 'internships#show', :id => /\d+/, :constraints => {:format => /(json)/}
