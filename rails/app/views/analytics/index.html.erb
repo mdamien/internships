@@ -72,64 +72,78 @@
     <p>Utilisez le formulaire à votre gauche pour afficher le nombre de stages par semestre par branche, en fonction de divers critères.
       <br/>En cliquant sur "Rechercher", le graphique ci-dessous se mettra à jour avec les nouveaux critères sélectionnés.
     </p>
-    <div id="container"/>
+    <div id="number-per-semester"/>
   </div>
-</div>
-
-<div class="row">
-  <div class="col-xs-12">
-    <pre>
-        <%= @data_internships.to_json.html_safe %>
-    </pre>
-  </div>
+  <div id="container"/>
 </div>
 
 <script type="application/javascript">
     $(document).ready(function() {
         $internship_data = <%= @data_internships.to_json.html_safe %>;
+        $companies_data = <%= @top_companies.to_json.html_safe %>;
+        $top_companies_total_count = <%= @top_companies_total_count.to_json.html_safe %>;
 
         categoriesFromData = function ($data) {
-            $semesters = [];
-            Object.keys($data).forEach(function(s) {
-                $semesters.push(s);
+            $categories = [];
+            Object.keys($data).forEach(function(c) {
+                $categories.push(c);
             });
 
-            return $semesters;
+            return $categories;
         };
 
         seriesFromData = function ($data) {
-            $countByBranch = [];
-            $branches = {};
+            $countBySeries = [];
+            $series = {};
 
-            Object.keys($data).forEach(function(s) {
-                Object.keys($data[s]).forEach(function(branch) {
-                    if (!$branches.hasOwnProperty(branch)) {
-                        $countByBranch.push({
-                            "name": branch,
+            Object.keys($data).forEach(function(category) {
+                Object.keys($data[category]).forEach(function(seriesName) {
+                    if (!$series.hasOwnProperty(seriesName)) {
+                        $countBySeries.push({
+                            "name": seriesName,
                             "data": []
                         });
 
-                        $branches[branch] = $countByBranch[$countByBranch.length - 1]["data"];
+                        $series[seriesName] = $countBySeries[$countBySeries.length - 1]["data"];
                     }
                 });
             });
 
             // Adding data for each branch for each semester
-            Object.keys($data).forEach(function(s) {
-                Object.keys($branches).forEach(function(branch) {
-                    if (branch in $data[s]) {
-                        $branches[branch].push($data[s][branch]);
+            Object.keys($data).forEach(function(category) {
+                Object.keys($series).forEach(function(seriesName) {
+                    if (seriesName in $data[category]) {
+                        $series[seriesName].push($data[category][seriesName]);
                     }
                     else {
-                        $branches[branch].push(0);
+                        $series[seriesName].push(0);
                     }
                 });
             });
 
-            return $countByBranch;
+            return $countBySeries;
         };
 
-        $('#container').highcharts({
+        hideSeries = function($series) {
+            for (i = 1; i < $series.length; i++) {
+                s = $series[i];
+                s["visible"] = false;
+            }
+
+            return $series;
+        };
+
+        formatTopCompaniesSeries = function($series) {
+            for (i = 0; i < $series.length; i++) {
+                s = $series[i];
+                s.total = $top_companies_total_count[s.name];
+                s.name += " (" + s.total + ")";
+            }
+
+            return hideSeries($series.sort(function(a,b) { return b.total - a.total }));
+        };
+
+        $('#number-per-semester').highcharts({
             chart: {
                 type: 'column'
             },
@@ -198,6 +212,38 @@
                  }
              });
          });
+
+        $('#container').highcharts({
+            title: {
+                text: 'Nombre de stages par entreprise par semestre',
+                x: -20 //center
+            },
+            xAxis: {
+                categories: categoriesFromData($companies_data)
+            },
+            yAxis: {
+                title: {
+                    text: 'Nombre de stages'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }],
+                min: 0,
+                allowDecimals: false
+            },
+            tooltip: {
+                valueSuffix: ' stages'
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle',
+                borderWidth: 0
+            },
+            series: formatTopCompaniesSeries(seriesFromData($companies_data))
+        });
     });
 
 </script>

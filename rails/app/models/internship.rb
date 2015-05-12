@@ -12,6 +12,7 @@ class Internship < ActiveRecord::Base
   scope :branch_like, -> (branch) { where("branch LIKE ?", "%"+ branch + "%") }
   scope :confidential_only, -> { where("confidential = 't'") }
   scope :exclude_not_done, -> { where("done = 't'") }
+  scope :company_equal, -> (company_equal) { where("company = ?", + company_equal) }
 
   scope :order_by_semester_desc, -> { order(year: :DESC).order(semester: :ASC) }
   scope :order_by_semester_asc, -> { order(year: :ASC).order(semester: :DESC) }
@@ -45,7 +46,6 @@ class Internship < ActiveRecord::Base
     if query.has_key?(:from_semester) && query.has_key?(:to_semester)
 
       internships = from_semester_to_semester(query[:from_semester], query[:to_semester])
-      internships = internships.filter(query.slice(:branch_like))
       internships = internships.confidential_only if query[:confidential_only].present?
       internships = internships.exclude_not_done unless query[:include_not_done].present?
 
@@ -64,6 +64,8 @@ class Internship < ActiveRecord::Base
         end
       end
 
+      internships = internships.filter(query.slice(:company_like, :country_like, :city_like, :filiere_like, :done_only, :branch_like))
+
       return internships
     end
 
@@ -74,7 +76,6 @@ class Internship < ActiveRecord::Base
   def self.internship_count_by_semester query
     internships = search(query)
 
-    internships = internships.filter(query.slice(:company_like, :country_like, :city_like, :filiere_like, :done_only))
     internships = internships
                       .group("year")
                       .group("semester")
@@ -144,9 +145,17 @@ class Internship < ActiveRecord::Base
     return cities_data
   end
 
-  def self.top_companies
-    if query.has_key?(:from_semester) && query.has_key?(:to_semester)
+  def self.top_companies query
+    internships = search(query)
 
-    end
+    top_companies = internships.select(:company).group("company").order("count_company DESC").limit(20).count(:company)
+    companies = top_companies.map { |c| c[0] }
+    return internships.where(company: companies)
+                     .group("year")
+                     .group("semester")
+                     .group("company")
+                     .order_by_semester_asc
+                     .count,
+        top_companies
   end
 end
