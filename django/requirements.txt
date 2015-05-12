@@ -1,0 +1,4 @@
+django==1.8
+django-haystack>=2.4
+whoosh
+django-debug-toolbar
