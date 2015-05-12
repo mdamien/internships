@@ -43,7 +43,5 @@ class ApplicationController < ActionController::Base
     # Adding missing parameters by default
     params[:from_semester] ||= @all_semesters.first()
     params[:to_semester] ||= @all_semesters.first()
-    params[:internship_type] ||= @internship_types["Tous"]
-    params[:branch] ||= "Toutes"
   end
 end

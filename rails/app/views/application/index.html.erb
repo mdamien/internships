@@ -15,11 +15,11 @@
       </div>
       <div class="form-group col-md-2">
         <%= label_tag(:internship_type, "Stages", style: "margin-right: 5px;") %>
-        <%= select_tag(:internship_type, options_for_select(@internship_types, params[:internship_type]), class: "form-control", id: "internship-type-filter") %>
+        <%= select_tag(:internship_type, options_for_select(@internship_types, params[:internship_type]), class: "form-control", id: "internship-type-filter", include_blank: "Tous") %>
       </div>
       <div id="branch-type-filter" class="form-group col-md-2">
-        <%= label_tag(:branch, "Branche", style: "margin-right: 5px;") %>
-        <%= select_tag(:branch, options_for_select(@all_branches, params[:branch]), class: "form-control") %>
+        <%= label_tag(:branch_like, "Branche", style: "margin-right: 5px;") %>
+        <%= select_tag(:branch_like, options_for_select(@all_branches, params[:branch_like]), class: "form-control", include_blank: "Toutes") %>
       </div>
       <button type="submit" class="col-md-2 btn btn-primary">Rechercher</button>
   <% end %>
@@ -171,7 +171,7 @@ $(document).ready(function() {
         internshipType = $internshipTypeFilter.val();
         if (internshipType == "all" || internshipType == "tn05") {
             $branchTypeFilter.children().hide();
-            $branchTypeFilter.find('select').val("Toutes");
+            $branchTypeFilter.find('select').val("");
         }
         else {
             $branchTypeFilter.children().show();

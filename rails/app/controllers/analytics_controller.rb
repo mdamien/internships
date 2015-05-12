@@ -17,7 +17,8 @@ class AnalyticsController < ApplicationController
 
   protected
 
-  # data is like this: [2010, "P", "GI"]: 53
+  # data input is like this: [2010, "P", "GI"]: 53, [2010, "P", "GB"]: 58
+  # data output is like this: { "P2010": {"GI": 53, "GB": 58}, "A2010": {"GI": 53, "GB": 58} }
   def format_internship_data(data)
     internship_data = Hash.new
 
@@ -41,7 +42,5 @@ class AnalyticsController < ApplicationController
     # Adding missing parameters by default
     params[:from_semester] ||= @all_semesters.last()
     params[:to_semester] ||= @all_semesters.first()
-    params[:internship_type] ||= @internship_types["Tous"]
-    params[:branch] ||= @all_branches.first()
   end
 end

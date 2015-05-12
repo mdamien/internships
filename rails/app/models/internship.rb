@@ -16,6 +16,19 @@ class Internship < ActiveRecord::Base
   scope :order_by_semester_desc, -> { order(year: :DESC).order(semester: :ASC) }
   scope :order_by_semester_asc, -> { order(year: :ASC).order(semester: :DESC) }
 
+  # from_s and to_s have to be "A2015" for instance.
+  def self.from_semester_to_semester(from_s, to_s)
+    from_year = from_s[1..4].to_i
+    to_year = to_s[1..4].to_i
+    from_semester = from_s[0]
+    to_semester = to_s[0]
+
+    return from_year(from_year)
+               .to_year(to_year)
+               .from_semester(from_year, from_semester)
+               .to_semester(to_year, to_semester)
+  end
+
   def self.order_internships_for_table
     return order(year: :DESC)
            .order(semester: :ASC)
@@ -29,34 +42,26 @@ class Internship < ActiveRecord::Base
   end
 
   def self.search query
-    if query.has_key?(:from_semester) && query.has_key?(:to_semester) && query.has_key?(:internship_type) && query.has_key?(:branch)
+    if query.has_key?(:from_semester) && query.has_key?(:to_semester)
 
-      from_year = query[:from_semester][1..4].to_i
-      to_year = query[:to_semester][1..4].to_i
-      from_semester = query[:from_semester][0]
-      to_semester = query[:to_semester][0]
+      internships = from_semester_to_semester(query[:from_semester], query[:to_semester])
+      internships = internships.filter(query.slice(:branch_like))
+      internships = internships.confidential_only if query[:confidential_only].present?
+      internships = internships.exclude_not_done unless query[:include_not_done].present?
 
-      internships = from_year(from_year)
-                        .to_year(to_year)
-                        .from_semester(from_year, from_semester)
-                        .to_semester(to_year, to_semester)
-
-      case query[:internship_type]
-        when "tn05"
-          internships = internships.where("level LIKE '%ouvrier%'")
-        when "tn09"
-         internships = internships.where("level LIKE '%assistant%'")
-        when "tn10"
-          internships = internships.where("level LIKE '%projet de fin%'")
-        when "intercultural"
-          internships = internships.where("level LIKE '%interculturel%'")
-        when "apprenticeship"
-          internships = internships.where("level LIKE '%apprentissage%'")
-      end
-
-      # Branch filter if internship type is not tn05 or not all internships.
-      if (query[:internship_type] != "tn05" || query[:internship_type] != "all") && query[:branch] != "Toutes"
-        internships = internships.branch_like(query[:branch])
+      if query[:internship_type].present?
+        case query[:internship_type]
+          when "tn05"
+            internships = internships.where("level LIKE '%ouvrier%'")
+          when "tn09"
+           internships = internships.where("level LIKE '%assistant%'")
+          when "tn10"
+            internships = internships.where("level LIKE '%projet de fin%'")
+          when "intercultural"
+            internships = internships.where("level LIKE '%interculturel%'")
+          when "apprenticeship"
+            internships = internships.where("level LIKE '%apprentissage%'")
+        end
       end
 
       return internships
@@ -70,8 +75,6 @@ class Internship < ActiveRecord::Base
     internships = search(query)
 
     internships = internships.filter(query.slice(:company_like, :country_like, :city_like, :filiere_like, :done_only))
-    internships = internships.confidential_only if query[:confidential_only].present?
-    internships = internships.exclude_not_done unless query[:include_not_done].present?
     internships = internships
                       .group("year")
                       .group("semester")
@@ -91,15 +94,11 @@ class Internship < ActiveRecord::Base
   end
 
   def self.all_branches_for_select
-    branches = self.all_branches.map { |b| b.branch }
-    branches.unshift("Toutes")
-
-    return branches
+    return self.all_branches.map { |b| b.branch }
   end
 
   def self.internship_types
     return {
-        "Tous" => "all",
         "TN05" => "tn05",
         "TN09" => "tn09",
         "TN10" => "tn10",
@@ -143,5 +142,11 @@ class Internship < ActiveRecord::Base
     end
 
     return cities_data
+  end
+
+  def self.top_companies
+    if query.has_key?(:from_semester) && query.has_key?(:to_semester)
+
+    end
   end
 end
