@@ -1,25 +1,40 @@
 class AnalyticsController < ApplicationController
 
   protect_from_forgery with: :exception
-  before_filter :set_search_query, :only => [:index, :count_by_semester_request]
+  before_filter :set_search_query
+  before_filter :set_form_parameters, :only => [:index, :top_companies]
 
   def index
-    @internship_analytics = true
-    @all_countries = Internship.all_countries_ordered_for_select
     data_internships = Internship.internship_count_by_semester(params)
     @data_internships = format_data_for_graphs(data_internships)
-    @all_cities_grouped_by_countries = Internship.all_cities_grouped_by_country_for_select
-
-    top_companies_data, @top_companies_total_count = Internship.top_companies(params)
-    @top_companies = format_data_for_graphs(top_companies_data)
   end
 
+  # Ajax request for count of internships by semester.
   def count_by_semester_request
-    @data_internships = Internship.internship_count_by_semester(params)
+    data_internships = Internship.internship_count_by_semester(params)
+    @data_internships = format_data_for_graphs(data_internships)
+
+    render json: {
+               :data_internships => @data_internships
+           }.to_json.html_safe
+  end
+
+  # Ajax request for top companies graph.
+  def top_companies_request
+    top_companies_data, @top_companies_total_count = Internship.top_companies(params)
+    @top_companies = format_data_for_graphs(top_companies_data)
+
+    render json: {
+               :top_companies_total_count => @top_companies_total_count,
+               :top_companies => @top_companies
+            }.to_json.html_safe
   end
 
   def top_companies
+    top_companies_data, @top_companies_total_count = Internship.top_companies(params)
+    @top_companies = format_data_for_graphs(top_companies_data)
 
+    render :index
   end
 
   protected
@@ -40,11 +55,17 @@ class AnalyticsController < ApplicationController
     return internship_data
   end
 
+  # Fetching data used for selects in analytics forms.
+  def set_form_parameters
+    @all_countries = Internship.all_countries_ordered_for_select
+    @all_cities_grouped_by_countries = Internship.all_cities_grouped_by_country_for_select
+    @internship_types = Internship.internship_types
+    @all_branches = Internship.all_branches_for_select
+  end
+
   # Default search parameters.
   def set_search_query
     @all_semesters = Internship.all_semesters_ordered
-    @internship_types = Internship.internship_types
-    @all_branches = Internship.all_branches_for_select
 
     # Adding missing parameters by default
     params[:from_semester] ||= @all_semesters.last()
