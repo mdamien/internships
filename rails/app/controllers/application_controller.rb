@@ -42,7 +42,7 @@ class ApplicationController < ActionController::Base
     @all_semesters = Internship.all_semesters_ordered
 
     # Adding missing parameters by default
-    params[:from_semester] ||= @all_semesters.first()
+    params[:from_semester] ||= @all_semesters.size > 1 ? @all_semesters[1] : @all_semesters.first()
     params[:to_semester] ||= @all_semesters.first()
   end
 end
