@@ -5,7 +5,7 @@
 {% block content %}
     <h4>{{stage.sujet}}</h4>
     <h6>{{stage.entreprise}}
-        {% if stage.done %}
+        {% if not stage.done %}
         <span class="label label-danger">Sujet non-pris</span>
         {% endif %}
         {% if stage.confidentiel %}

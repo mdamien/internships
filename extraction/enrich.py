@@ -4,13 +4,15 @@ import geolat2
 stages = json.load(open('data/details.json'))
 basics = json.load(open('data/basics.json'))
 geocoded = json.load(open('data/geocoded.json'))
-geocoded_simple = json.load(open('data/geocoded3_cold.json'))
 
 print('files loaded')
 
 stages_dict = {s['num']:s for s in stages}
 
 geocoded_count = 0
+filiere_count = 0
+niveau_count = 0
+
 
 for stage in basics:
     n = None
@@ -40,16 +42,6 @@ for stage in basics:
                 loc = r[0]['geometry']['location']
                 lat = loc['lat']
                 lng = loc['lng']
-        try:
-            simple_addr = geolat2.simplify(addr)
-            if lat == None and simple_addr in geocoded_simple:
-                #TODO:if FRANCE verify context is FRANCE, US, GRANDE BRETAGNE,...
-                r = geocoded_simple[simple_addr]['features']
-                if len(r) > 0:
-                    loc = r[0]['center']
-                    lng,lat = loc
-        except Exception as e:
-            print(e)
     if lat != None: 
         geocoded_count += 1
 
@@ -115,6 +107,9 @@ for stage in basics:
         else:
             #niveau_abbrev = "Autre"
             print("niveau inconnu:", n,stage['niveau'][:30],)
+
+    if niveau_abbrev != "":
+        niveau_count += 1
 
     stage['branche_abbrev'] = branche_abbrev
     stage['niveau_abbrev'] = niveau_abbrev
@@ -186,6 +181,9 @@ for stage in basics:
         else:
             print("Filiere inconnue:", fil[:100])
 
+    if filiere_abbrev != "":
+        filiere_count += 1
+
     stage['company'] = stage['company'].strip()
 
     stage['filiere_abbrev'] = filiere_abbrev
@@ -201,4 +199,6 @@ for stage in basics:
     stage['semestre_trimestre'] = stage['semestre'][0]
 
 print('geocoded',geocoded_count,"/",len(basics))
+print('filiere abbrev found',filiere_count,"/",len(basics))
+print('niveau abbrev found',niveau_count,"/",len(basics))
 json.dump(basics, open('data/enriched.json','w'), indent=2)
