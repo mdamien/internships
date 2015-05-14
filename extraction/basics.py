@@ -17,8 +17,11 @@ c = 0
 for i,stage in enumerate(stages):
     try:
         soup = BeautifulSoup(stage)
-        semester, title, company, _, city, country, _ = [x.text for x in soup.findAll('td')]
+        semester, title, company, _, city, country_code, _ = [x.text for x in soup.findAll('td')]
         o = soup.find('tr').attrs.get('onclick','')
+        for td in soup.findAll('td'):
+            if 'title' in td.attrs:
+                country = td.attrs['title']
         if o == '':
             print("pas de num:",company)
             c += 1
@@ -30,6 +33,7 @@ for i,stage in enumerate(stages):
             'company':company,
             'city':city,
             'title':title,
+            #use country code / abbrev ?
             })
     except Exception as e:
         print(stage)
