@@ -22,7 +22,7 @@
         </div>
         <div class="navbar-collapse collapse" id="navbar-main">
           <ul class="nav navbar-nav">
-            <li class="<% if @internship_list %>active<% end %>">
+            <li class="<% if params[:controller] == 'application' %>active<% end %>">
               <a href="/">Liste des stages</a>
             </li>
             <li class="dropdown <%= 'active' if params[:controller] == 'analytics' %>">

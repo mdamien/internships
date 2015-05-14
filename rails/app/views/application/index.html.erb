@@ -14,8 +14,8 @@
         <%= select_tag(:to_semester, options_for_select(@all_semesters, params[:to_semester]), class: "form-control") %>
       </div>
       <div class="form-group col-md-2">
-        <%= label_tag(:internship_type, "Stages", style: "margin-right: 5px;") %>
-        <%= select_tag(:internship_type, options_for_select(@internship_types, params[:internship_type]), class: "form-control", id: "internship-type-filter", include_blank: "Tous") %>
+        <%= label_tag(:level_like, "Stages", style: "margin-right: 5px;") %>
+        <%= select_tag(:level_like, options_for_select(@all_levels, params[:level_like]), class: "form-control", include_blank: "Tous") %>
       </div>
       <div id="branch-type-filter" class="form-group col-md-2">
         <%= label_tag(:branch_like, "Branche", style: "margin-right: 5px;") %>

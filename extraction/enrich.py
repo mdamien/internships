@@ -53,6 +53,9 @@ for stage in basics:
     stage['lat'] = lat
     stage['lng'] = lng
 
+    #add country
+    stage['country'] = addr.split("\n")[-1]
+
     #add branch, niveau, semester, filiere,...
     branche_abbrev = ""
     filiere = ""
@@ -99,17 +102,17 @@ for stage in basics:
         elif 'fin' in nl:
             niveau_abbrev = "TN10"
         elif 'master' in nl:
-            niveau_abbrev = "master"
+            niveau_abbrev = "Master"
         elif 'apprenti' in nl:
-            niveau_abbrev = "apprentissage"
+            niveau_abbrev = "Apprentissage"
         elif 'intercul' in nl:
-            niveau_abbrev = "interculturel"
+            niveau_abbrev = "TN07"
         elif 'licence' in nl:
-            niveau_abbrev = "licence"
+            niveau_abbrev = "Licence Pro"
         elif 'hutech' in nl:
-            niveau_abbrev = "hutech"
+            niveau_abbrev = "HuTech"
         else:
-            niveau_abbrev = "autre"
+            niveau_abbrev = "Autre"
             print("niveau inconnu:", n,stage['niveau'][:30],)
 
     stage['branche_abbrev'] = branche_abbrev

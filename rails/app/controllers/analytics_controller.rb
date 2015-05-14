@@ -59,7 +59,7 @@ class AnalyticsController < ApplicationController
   def set_form_parameters
     @all_countries = Internship.all_countries_ordered_for_select
     @all_cities_grouped_by_countries = Internship.all_cities_grouped_by_country_for_select
-    @internship_types = Internship.internship_types
+    @all_levels = Internship.all_levels_for_select
     @all_branches = Internship.all_branches_for_select
   end
 

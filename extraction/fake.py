@@ -35,7 +35,7 @@ for i in range(20000):
     company = fake.company()
     description = fake.text()
     etudiant = fake.name()
-    niveau = fake.random_element(('assistant',u"projet de fin d\'étude",'stage ouvrier', 'apprentissage', 'interculturel'))
+    niveau = fake.random_element(('TN09','TN10','TN05', 'Apprentissage', 'TN07'))
     country = fake.random_element(countries)
     city = fake.random_element(cities)
     semestre = fake.random_element(('A','P'))

@@ -7,6 +7,9 @@ class ApplicationController < ActionController::Base
   def index
     @internship_list = true
 
+    @all_levels = Internship.all_levels_for_select
+    @all_branches = Internship.all_branches_for_select
+
     #Retrieving most recent year data from database by default
     @internships = Internship.search(params).order_internships_for_table
 
@@ -18,9 +21,9 @@ class ApplicationController < ActionController::Base
     }
 
     @internships.each do |i|
-      @internship_data_json["countries"].add(i.country)
-      @internship_data_json["cities"].add(i.city)
-      @internship_data_json["companies"].add(i.company)
+      @internship_data_json["countries"].add(i.country) unless i.country.nil?
+      @internship_data_json["cities"].add(i.city) unless i.city.nil?
+      @internship_data_json["companies"].add(i.company) unless i.company.nil?
     end
   end
   
@@ -37,8 +40,6 @@ class ApplicationController < ActionController::Base
   #Default search parameters.
   def set_search_query
     @all_semesters = Internship.all_semesters_ordered
-    @internship_types = Internship.internship_types
-    @all_branches = Internship.all_branches_for_select
 
     # Adding missing parameters by default
     params[:from_semester] ||= @all_semesters.first()
