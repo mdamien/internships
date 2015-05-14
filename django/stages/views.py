@@ -69,12 +69,14 @@ def search(request):
         results = results.filter(semestre_annee__lte=to_annee, \
             semestre__gte=to_sem)
 
+    """
     q = request.GET.get('q',None)
     if q and q != "" and q != None:
         results = [x.object for x in
             watson.search(q, models=(results,),ranking=False)]
         results.sort(key=lambda x:x.semestre)
         results.sort(key=lambda x:-x.semestre_annee)
+    """
 
     context['nb_results'] = len(results)
 
@@ -83,6 +85,7 @@ def search(request):
             'lat':s.lat,
             'lng':s.lng,
             'sujet':s.sujet,
+            'addresse':s.addresse,
             'url':s.get_absolute_url(),
             'pk':s.pk,
         } for s in results]

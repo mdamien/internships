@@ -19,7 +19,7 @@ DATA.forEach(function(x){
     if(x.lat == null){
         count_bad += 1;
     }else{
-        var title = "<a href='"+x.url+"'>"+x.sujet+"</a>";
+        var title = "<a href='"+x.url+"'>"+x.sujet+"</a>"+x.addresse;
         var m = L.marker(L.latLng(x.lat, x.lng))
             .bindPopup(title);
         markers.addLayer(m);

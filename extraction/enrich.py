@@ -4,7 +4,6 @@ import geolat2
 stages = json.load(open('data/details.json'))
 basics = json.load(open('data/basics.json'))
 geocoded = json.load(open('data/geocoded.json'))
-geocoded_simple = json.load(open('data/geocoded3_cold.json'))
 
 print('files loaded')
 
@@ -37,16 +36,6 @@ for stage in basics:
                 loc = r[0]['geometry']['location']
                 lat = loc['lat']
                 lng = loc['lng']
-        try:
-            simple_addr = geolat2.simplify(addr)
-            if lat == None and simple_addr in geocoded_simple:
-                #TODO:if FRANCE verify context is FRANCE, US, GRANDE BRETAGNE,...
-                r = geocoded_simple[simple_addr]['features']
-                if len(r) > 0:
-                    loc = r[0]['center']
-                    lng,lat = loc
-        except Exception as e:
-            print(e)
     if lat != None: 
         geocoded_count += 1
 
