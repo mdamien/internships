@@ -4,9 +4,11 @@ class CreateInternships < ActiveRecord::Migration
       t.string  :address
       t.string  :company
       t.string  :branch
+      t.string  :branch_abbreviation
       t.text    :description
       t.string  :student
       t.string  :level
+      t.string  :level_abbreviation
       t.string  :subject
       t.string  :semester
       t.integer :year
@@ -14,6 +16,7 @@ class CreateInternships < ActiveRecord::Migration
       t.string  :city
       t.string  :country
       t.string  :filiere
+      t.string  :filiere_abbreviation
       t.float   :latitude
       t.float   :longitude
       t.boolean :done

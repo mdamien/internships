@@ -31,6 +31,9 @@ for stage in basics:
     lng = None
     if addr:
         if addr in geocoded:
+            #add country
+            stage['country'] = addr.split("\n")[-1].strip()
+
             r = geocoded[addr]['results']
             if len(r) > 0:
                 loc = r[0]['geometry']['location']
@@ -66,13 +69,14 @@ for stage in basics:
         elif bl.startswith('Humanités et Technologie'.lower()):
             branche_abbrev = "HuTech"
         elif bl.startswith('Transformation et Valorisation'.lower()) \
-            or bl.startswith('Systèmes Complexes en Interaction'.lower()):
+            or bl.startswith('Systèmes Complexes en Interaction'.lower()) \
+            or bl.startswith('Innovation et Complexité'.lower()):
             branche_abbrev = "Master"
         elif bl.startswith('maintenance des'):
             branche_abbrev = "Licence Pro"
         else:
-            branche_abbrev = "autre"
-            print("branche inconnue:", n,stage['branche'][:50])
+            #  branche_abbrev = "Autre"
+            print("branche inconnue:", n,stage['branche'][:100])
 
         splitted = stage['branche'].split('filière',2)
         if len(splitted) > 1:
@@ -88,25 +92,94 @@ for stage in basics:
         elif 'fin' in nl:
             niveau_abbrev = "TN10"
         elif 'master' in nl:
-            niveau_abbrev = "master"
+            niveau_abbrev = "Master"
         elif 'apprenti' in nl:
-            niveau_abbrev = "apprentissage"
+            niveau_abbrev = "Apprentissage"
         elif 'intercul' in nl:
-            niveau_abbrev = "interculturel"
+            niveau_abbrev = "TN07"
         elif 'licence' in nl:
-            niveau_abbrev = "licence"
+            niveau_abbrev = "Licence Pro"
         elif 'hutech' in nl:
-            niveau_abbrev = "hutech"
+            niveau_abbrev = "HuTech"
         else:
-            niveau_abbrev = "autre"
+            #niveau_abbrev = "Autre"
             print("niveau inconnu:", n,stage['niveau'][:30],)
 
     stage['branche_abbrev'] = branche_abbrev
     stage['niveau_abbrev'] = niveau_abbrev
 
     stage['filiere'] = filiere
+    filiere_abbrev = ''
 
-    stage['sujet'] = stage['title']
+    fil = filiere.lower().strip()
+    #GI
+    if len(fil) > 1:
+        if fil.startswith('Fouille de Données'.lower()):
+            filiere_abbrev = 'FDD'
+        elif fil.startswith('Systèmes et réseaux informatiques'.lower()):
+            filiere_abbrev = 'SRI'
+        elif fil.startswith('Aide à la décision en logistique'.lower()):
+            filiere_abbrev = 'ADEL'
+        elif fil.startswith("Ingénierie des connaissances et des supports".lower()):
+            filiere_abbrev = 'ICSI'
+        elif fil.startswith('systèmes temps-réel et informatique enfouie'.lower()):
+            filiere_abbrev = 'STRI'
+        #GB
+        elif fil.startswith('Biomatériaux et biomécanique'.lower()):
+            filiere_abbrev = 'BB'
+        elif fil.startswith('Biomédical'.lower()):
+            filiere_abbrev = 'BM'
+        elif fil.startswith('conception et innnovation de bioproduits'.lower()):
+            filiere_abbrev = 'CIB'
+        elif fil.startswith('innovation aliments et agroressources'.lower()):
+            filiere_abbrev = 'IAA'
+        #GM
+        elif fil.startswith('Acoustique et vibrations industrielles'.lower()):
+            filiere_abbrev = 'AVI'
+        elif fil.startswith('fiabilité-qualité industrielle'.lower()):
+            filiere_abbrev = 'FQI'
+        elif fil.startswith('Ingénierie du design industriel'.lower()):
+            filiere_abbrev = 'IDI'
+        elif fil.startswith('Matériaux et innovation technologique'.lower()):
+            filiere_abbrev = 'MIT'
+        elif fil.startswith('mécatronique, actionneurs, robotisation et systèmes'.lower()):
+            filiere_abbrev = 'MARS'
+        #GSM
+        elif fil.startswith('Conception mécanique intégrée'.lower()):
+            filiere_abbrev = 'CMI'
+        elif fil.startswith('modélisation et optimisation des produits et structures'.lower()):
+            filiere_abbrev = 'MOPS'
+        elif fil.startswith('Production intégrée et logistique'.lower()):
+            filiere_abbrev = 'PIL'
+        #GSU
+        elif fil.startswith("systèmes et réseaux pour l'environnement construit".lower()):
+            filiere_abbrev = 'SR'
+        elif fil.startswith('systèmes techniques intégrés'.lower()):
+            filiere_abbrev = 'STI'
+        elif fil.startswith('Aménagement et Ingénierie Environnementale'.lower()):
+            filiere_abbrev = 'AIE'
+        #GP
+        elif fil.startswith('Qualité, Sécurité, Environnement'.lower()):
+            filiere_abbrev = 'QSE'
+        elif fil.startswith('Conduite des Procédés Industriels'.lower()):
+            filiere_abbrev = 'CPI'
+        elif fil.startswith('thermique-energétique'.lower()):
+            filiere_abbrev = 'TE'
+        elif fil.startswith('agro-industrie'.lower()):
+            filiere_abbrev = 'AI'
+
+        elif fil.startswith('Management des Projets Innovants'.lower()):
+            filiere_abbrev = 'MPI'
+        elif fil.startswith('Filière libre'.lower()):
+            filiere_abbrev = 'Libre'
+        else:
+            print("Filiere inconnue:", fil[:100])
+
+    stage['company'] = stage['company'].strip()
+
+    stage['filiere_abbrev'] = filiere_abbrev
+
+    stage['sujet'] = stage['title'].strip()
     stage.pop('title',None)
     stage['semestre'] = stage['semester']
     stage.pop('semester',None)

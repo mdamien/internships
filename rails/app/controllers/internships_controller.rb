@@ -17,12 +17,12 @@ before_action :set_internship, only: [:show]
     end
 
     @data = Internship.
-        select(params[:search_by]).
+        select("LOWER("+params[:search_by] + ") AS " + params[:search_by]).
         where(params[:search_by] + " LIKE ?", "%" + params[:q] + "%")
         .distinct
         .limit(8)
         .order(params[:search_by] + " ASC")
-        .map { |c| c[params[:search_by]] }
+        .map { |c| c[params[:search_by]].titleize }
   end
 
   def set_internship

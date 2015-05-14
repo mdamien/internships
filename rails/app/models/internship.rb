@@ -8,13 +8,28 @@ class Internship < ActiveRecord::Base
   scope :company_like, -> (company) { where("company LIKE ?", "%"+ company + "%") }
   scope :country_like, -> (country) { where("country LIKE ?", "%"+ country + "%") }
   scope :city_like, -> (city) { where("city LIKE ?", "%"+ city + "%") }
-  scope :filiere_like, -> (filiere) { where("filiere LIKE ?", "%"+ filiere + "%") }
-  scope :branch_like, -> (branch) { where("branch LIKE ?", "%"+ branch + "%") }
+  scope :level_like, -> (level) { where("level_abbreviation LIKE ?", "%"+ level + "%") }
+  scope :filiere_like, -> (filiere) { where("filiere_abbretiation LIKE ?", "%"+ filiere + "%") }
+  scope :branch_like, -> (branch) { where("branch_abbreviation LIKE ?", "%"+ branch + "%") }
   scope :confidential_only, -> { where("confidential = 't'") }
   scope :exclude_not_done, -> { where("done = 't'") }
+  scope :company_equal, -> (company) { where("company = ?", + company) }
 
   scope :order_by_semester_desc, -> { order(year: :DESC).order(semester: :ASC) }
   scope :order_by_semester_asc, -> { order(year: :ASC).order(semester: :DESC) }
+
+  # from_s and to_s have to be "A2015" for instance.
+  def self.from_semester_to_semester(from_s, to_s)
+    from_year = from_s[1..4].to_i
+    to_year = to_s[1..4].to_i
+    from_semester = from_s[0]
+    to_semester = to_s[0]
+
+    return from_year(from_year)
+               .to_year(to_year)
+               .from_semester(from_year, from_semester)
+               .to_semester(to_year, to_semester)
+  end
 
   def self.order_internships_for_table
     return order(year: :DESC)
@@ -29,35 +44,12 @@ class Internship < ActiveRecord::Base
   end
 
   def self.search query
-    if query.has_key?(:from_semester) && query.has_key?(:to_semester) && query.has_key?(:internship_type) && query.has_key?(:branch)
+    if query.has_key?(:from_semester) && query.has_key?(:to_semester)
 
-      from_year = query[:from_semester][1..4].to_i
-      to_year = query[:to_semester][1..4].to_i
-      from_semester = query[:from_semester][0]
-      to_semester = query[:to_semester][0]
-
-      internships = from_year(from_year)
-                        .to_year(to_year)
-                        .from_semester(from_year, from_semester)
-                        .to_semester(to_year, to_semester)
-
-      case query[:internship_type]
-        when "tn05"
-          internships = internships.where("level LIKE '%ouvrier%'")
-        when "tn09"
-         internships = internships.where("level LIKE '%assistant%'")
-        when "tn10"
-          internships = internships.where("level LIKE '%projet de fin%'")
-        when "intercultural"
-          internships = internships.where("level LIKE '%interculturel%'")
-        when "apprenticeship"
-          internships = internships.where("level LIKE '%apprentissage%'")
-      end
-
-      # Branch filter if internship type is not tn05 or not all internships.
-      if (query[:internship_type] != "tn05" || query[:internship_type] != "all") && query[:branch] != "Toutes"
-        internships = internships.branch_like(query[:branch])
-      end
+      internships = from_semester_to_semester(query[:from_semester], query[:to_semester])
+      internships = internships.confidential_only if query[:confidential_only].present?
+      internships = internships.exclude_not_done unless query[:include_not_done].present?
+      internships = internships.filter(query.slice(:company_like, :country_like, :city_like, :filiere_like, :done_only, :branch_like, :level_like))
 
       return internships
     end
@@ -69,13 +61,10 @@ class Internship < ActiveRecord::Base
   def self.internship_count_by_semester query
     internships = search(query)
 
-    internships = internships.filter(query.slice(:company_like, :country_like, :city_like, :filiere_like, :done_only))
-    internships = internships.confidential_only if query[:confidential_only].present?
-    internships = internships.exclude_not_done unless query[:include_not_done].present?
     internships = internships
                       .group("year")
                       .group("semester")
-                      .group("branch")
+                      .group("branch_abbreviation")
                       .order_by_semester_asc
                       .count
 
@@ -87,25 +76,19 @@ class Internship < ActiveRecord::Base
   end
 
   def self.all_branches
-    return select(:branch).distinct.order(branch: :ASC)
+    return select(:branch_abbreviation).where.not(branch_abbreviation: '').distinct.order(branch_abbreviation: :ASC)
   end
 
   def self.all_branches_for_select
-    branches = self.all_branches.map { |b| b.branch }
-    branches.unshift("Toutes")
-
-    return branches
+    return self.all_branches.map { |b| b.branch_abbreviation }
   end
 
-  def self.internship_types
-    return {
-        "Tous" => "all",
-        "TN05" => "tn05",
-        "TN09" => "tn09",
-        "TN10" => "tn10",
-        "Apprentissage" => "apprenticeship",
-        "Interculturel" => "intercultural"
-    }
+  def self.all_levels
+    return select(:level_abbreviation).where.not(level_abbreviation: '').distinct.order(level_abbreviation: :ASC)
+  end
+
+  def self.all_levels_for_select
+    return self.all_levels.map { |l| l.level_abbreviation }
   end
 
   def self.all_semesters_ordered
@@ -143,5 +126,19 @@ class Internship < ActiveRecord::Base
     end
 
     return cities_data
+  end
+
+  def self.top_companies query
+    internships = search(query)
+
+    top_companies = internships.select(:company).group("company").order("count_company DESC").limit(20).count(:company)
+    companies = top_companies.map { |c| c[0] }
+    return internships.where(company: companies)
+                     .group("year")
+                     .group("semester")
+                     .group("company")
+                     .order_by_semester_asc
+                     .count,
+        top_companies
   end
 end

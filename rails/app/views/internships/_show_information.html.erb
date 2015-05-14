@@ -1,5 +1,5 @@
 <strong>Branche</strong>
-<p><%= internship.branch %></p>
+<p><%= internship.branch_abbreviation %><%= " (" + internship.filiere + ")" if internship.filiere.present? %></p>
 <strong>Étudiant</strong>
 <p><%= internship.student %></p>
 <strong>Descriptif</strong>

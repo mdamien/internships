@@ -14,12 +14,12 @@
         <%= select_tag(:to_semester, options_for_select(@all_semesters, params[:to_semester]), class: "form-control") %>
       </div>
       <div class="form-group col-md-2">
-        <%= label_tag(:internship_type, "Stages", style: "margin-right: 5px;") %>
-        <%= select_tag(:internship_type, options_for_select(@internship_types, params[:internship_type]), class: "form-control", id: "internship-type-filter") %>
+        <%= label_tag(:level_like, "Stages", style: "margin-right: 5px;") %>
+        <%= select_tag(:level_like, options_for_select(@all_levels, params[:level_like]), class: "form-control", include_blank: "Tous") %>
       </div>
       <div id="branch-type-filter" class="form-group col-md-2">
-        <%= label_tag(:branch, "Branche", style: "margin-right: 5px;") %>
-        <%= select_tag(:branch, options_for_select(@all_branches, params[:branch]), class: "form-control") %>
+        <%= label_tag(:branch_like, "Branche", style: "margin-right: 5px;") %>
+        <%= select_tag(:branch_like, options_for_select(@all_branches, params[:branch_like]), class: "form-control", include_blank: "Toutes") %>
       </div>
       <button type="submit" class="col-md-2 btn btn-primary">Rechercher</button>
   <% end %>
@@ -163,25 +163,6 @@ $(document).ready(function() {
                     }).length === $filtersUsed.length;
         }).show();
     }
-
-    //Branch type filter should be hidden when user does not want to see branch internships.
-    $branchTypeFilter = $('#branch-type-filter');
-    $internshipTypeFilter = $('#internship-type-filter');
-    function manageBranchTypeFilter() {
-        internshipType = $internshipTypeFilter.val();
-        if (internshipType == "all" || internshipType == "tn05") {
-            $branchTypeFilter.children().hide();
-            $branchTypeFilter.find('select').val("Toutes");
-        }
-        else {
-            $branchTypeFilter.children().show();
-        }
-    }
-    manageBranchTypeFilter();
-
-    $internshipTypeFilter.on('change', function(){
-       manageBranchTypeFilter();
-    });
 
     $internship_data = <%= @internship_data_json.to_json.html_safe %>;
 
