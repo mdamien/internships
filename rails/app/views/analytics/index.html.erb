@@ -80,7 +80,7 @@
     <% if current_page?(controller: 'analytics', action: 'index') %>
         <div id="count-per-semester"/>
     <% elsif current_page?(controller: 'analytics', action: 'top_companies') %>
-        <div id="top-companies"/>
+        <div id="top-companies" style="height: 700px"/>
     <% end %>
   </div>
 </div>
@@ -136,7 +136,7 @@
                 autoSelect: false,
                 minLength: 1,
                 source: function (query, process) {
-                    return $.get('internships/search?search_by=' + $this.attr("typeahead-search") + '&q=' + query, function (data) {
+                    return $.get('/internships/search?search_by=' + $this.attr("typeahead-search") + '&q=' + query, function (data) {
                         return process(data);
                     });
                 }

@@ -21,9 +21,9 @@ class ApplicationController < ActionController::Base
     }
 
     @internships.each do |i|
-      @internship_data_json["countries"].add(i.country) unless i.country.nil?
-      @internship_data_json["cities"].add(i.city) unless i.city.nil?
-      @internship_data_json["companies"].add(i.company) unless i.company.nil?
+      @internship_data_json["countries"].add(i.country.titleize) unless i.country.nil?
+      @internship_data_json["cities"].add(i.city.titleize) unless i.city.nil?
+      @internship_data_json["companies"].add(i.company.titleize) unless i.company.nil?
     end
   end
   

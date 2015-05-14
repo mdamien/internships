@@ -8,10 +8,10 @@ namespace :app do
 
     Internship.delete_all
 
-    #addresse,branche,branche_abbrev,city,company,confidentiel,country,description,done,etudiant,filiere,lat,lng,niveau,niveau_abbrev,num,semestre,semestre_annee,semestre_trimestre,sujet,tuteur
+    #addresse,branche,branche_abbrev,city,company,confidentiel,country,description,done,etudiant,filiere,filiere_abbrev,lat,lng,niveau,niveau_abbrev,num,semestre,semestre_annee,semestre_trimestre,sujet,tuteur
     CSV.foreach(file, :headers => true) do |row|
 
-      if Internship.where(:id => row[15]).blank?
+      if Internship.where(:id => row[16]).blank?
         Internship.create({
           address: row[0],
           branch: row[1],
@@ -24,18 +24,19 @@ namespace :app do
           done: row[8] == "x" ? true : false,
           student: row[9],
           filiere: row[10],
-          latitude: row[11],
-          longitude: row[12],
-          level: row[13],
-          level_abbreviation: row[14],
-          id: row[15],
-          year: row[17],
-          semester: row[18],
-          subject: row[19],
-          teacher: row[20]
+          filiere_abbreviation: row[11],
+          latitude: row[12],
+          longitude: row[13],
+          level: row[14],
+          level_abbreviation: row[15],
+          id: row[16],
+          year: row[18],
+          semester: row[19],
+          subject: row[20],
+          teacher: row[21]
         })
       else
-        puts row[15].inspect
+        puts row[16].inspect
       end
     end
   end
