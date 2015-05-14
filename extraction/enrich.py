@@ -33,9 +33,9 @@ for stage in basics:
     lat = None
     lng = None
     if addr:
+        #add country
+        stage['country'] = addr.split("\n")[-1].strip()
         if addr in geocoded:
-            #add country
-            stage['country'] = addr.split("\n")[-1].strip()
 
             r = geocoded[addr]['results']
             if len(r) > 0:
