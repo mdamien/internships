@@ -41,10 +41,10 @@
       </thead>
       <tr>
         <td></td>
-        <td><div class="form-group has-warning"><input type="text" class="form-control subject" placeholder="Entrez une expression pour filtrer les sujets" autocomplete="off"/></div></td>
-        <td><div class="form-group has-warning"><input data-provide="typeahead" typeahead-search="company" type="text" class="form-control company" placeholder="Filtrer entreprises" autocomplete="off"/></div></td>
-        <td><div class="form-group has-warning"><input data-provide="typeahead" typeahead-search="city" type="text" class="form-control city" placeholder="Ville" autocomplete="off"/></div></td>
-        <td><div class="form-group has-warning"><input data-provide="typeahead" typeahead-search="country" type="text" class="form-control country" placeholder="Pays" autocomplete="off"/></div></td>
+        <td><div class="form-group"><input type="text" class="form-control subject" placeholder="Entrez une expression pour filtrer les sujets" autocomplete="off"/></div></td>
+        <td><div class="form-group"><input data-provide="typeahead" typeahead-search="company" type="text" class="form-control company" placeholder="Filtrer entreprises" autocomplete="off"/></div></td>
+        <td><div class="form-group"><input data-provide="typeahead" typeahead-search="city" type="text" class="form-control city" placeholder="Ville" autocomplete="off"/></div></td>
+        <td><div class="form-group"><input data-provide="typeahead" typeahead-search="country" type="text" class="form-control country" placeholder="Pays" autocomplete="off"/></div></td>
       </tr>
       <% @internships.each do |internship| %>
           <tr internship-id="<%= internship.id %>">

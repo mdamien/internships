@@ -105,7 +105,7 @@ class Internship < ActiveRecord::Base
   end
 
   def self.all_countries_ordered_for_select
-    return  select(:country).where("length(country) > 2").distinct.order(country: :ASC).map { |c| c.country }
+    return  select(:country).distinct.order(country: :ASC).map { |c| c.country }
   end
 
   def self.all_cities_grouped_by_country_for_select

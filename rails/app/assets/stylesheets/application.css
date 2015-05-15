@@ -36,3 +36,11 @@ body {
     overflow-y: auto;
     max-height: 85vh;
 }
+
+a {
+    color: inherit;
+}
+
+a:hover {
+    text-decoration: none;
+}
