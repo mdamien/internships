@@ -57,7 +57,7 @@ w.writerow([
     'country',
     ])
 
-for stage in stages:
+for stage in l:
     w.writerow([
         stage['num'],
         stage['title'],
@@ -68,7 +68,7 @@ for stage in stages:
         ])
 
 nums = []
-for stage in stages:
+for stage in l:
     n = stage['num']
     if n:
         try:
