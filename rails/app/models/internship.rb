@@ -105,12 +105,14 @@ class Internship < ActiveRecord::Base
   end
 
   def self.all_countries_ordered_for_select
-    return  select(:country).distinct.order(country: :ASC).map { |c| c.country }
+    return  select(:country).where("length(country) > 2").distinct.order(country: :ASC).map { |c| c.country }
   end
 
   def self.all_cities_grouped_by_country_for_select
     cities = select(:country)
         .select(:city)
+        .where.not(city: '')
+        .where.not("trim(city) LIKE ?", "(%")
         .distinct
         .order(country: :ASC)
         .order(city: :ASC)
@@ -131,12 +133,12 @@ class Internship < ActiveRecord::Base
   def self.top_companies query
     internships = search(query)
 
-    top_companies = internships.select(:company).group("company").order("count_company DESC").limit(20).count(:company)
+    top_companies = internships.select("upper(company)").group("upper(company)").order("count_company DESC").limit(20).count(:company)
     companies = top_companies.map { |c| c[0] }
-    return internships.where(company: companies)
+    return internships.where("upper(company) IN (?)", companies)
                      .group("year")
                      .group("semester")
-                     .group("company")
+                     .group("upper(company)")
                      .order_by_semester_asc
                      .count,
         top_companies
