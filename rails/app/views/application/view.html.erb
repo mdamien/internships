@@ -2,7 +2,7 @@
   <h4><%= @internship.subject %></h4>
   <hr/>
   <h5>Description</h5>
-  <p><%= @internship.description %></p>
+  <%= simple_format(@internship.description, {}, sanitize: true) %>
 
   <div class="row">
     <div class="col-md-4">
