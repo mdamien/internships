@@ -61,6 +61,7 @@ class AnalyticsController < ApplicationController
     @all_cities_grouped_by_countries = Internship.all_cities_grouped_by_country_for_select
     @all_levels = Internship.all_levels_for_select
     @all_branches = Internship.all_branches_for_select
+    @all_filieres_grouped_by_branches = Internship.all_filieres
   end
 
   # Default search parameters.

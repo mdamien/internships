@@ -9,7 +9,7 @@ class Internship < ActiveRecord::Base
   scope :country_like, -> (country) { where("country LIKE ?", "%"+ country + "%") }
   scope :city_like, -> (city) { where("city LIKE ?", "%"+ city + "%") }
   scope :level_like, -> (level) { where("level_abbreviation LIKE ?", "%"+ level + "%") }
-  scope :filiere_like, -> (filiere) { where("filiere_abbretiation LIKE ?", "%"+ filiere + "%") }
+  scope :filiere_like, -> (filiere) { where("filiere_abbreviation LIKE ?", "%"+ filiere + "%") }
   scope :branch_like, -> (branch) { where("branch_abbreviation LIKE ?", "%"+ branch + "%") }
   scope :confidential_only, -> { where("confidential = 't'") }
   scope :exclude_not_done, -> { where("done = 't'") }
@@ -81,6 +81,32 @@ class Internship < ActiveRecord::Base
 
   def self.all_branches_for_select
     return self.all_branches.map { |b| b.branch_abbreviation }
+  end
+
+  def self.all_filieres
+    # Grouping and having because some students from branches took filieres from other branches (very rare, so having count > 5 is enough to make sure we select only actual branch filieres)
+    filieres =  select(:branch_abbreviation)
+                    .select(:filiere_abbreviation)
+                    .where.not(branch_abbreviation: '')
+                    .where.not(filiere_abbreviation: '')
+                    .group(:branch_abbreviation)
+                    .group(:filiere_abbreviation)
+                    .distinct
+                    .order(branch_abbreviation: :ASC)
+                    .order(filiere_abbreviation: :ASC)
+                    .having("COUNT (*) > 5")
+
+    filieres_data = Hash.new
+
+    filieres.each do |f|
+      if filieres_data.has_key?(f.branch_abbreviation)
+        filieres_data[f.branch_abbreviation].push(f.filiere_abbreviation)
+      else
+        filieres_data[f.branch_abbreviation] = [f.filiere_abbreviation]
+      end
+    end
+
+    return filieres_data
   end
 
   def self.all_levels
