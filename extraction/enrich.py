@@ -13,12 +13,17 @@ geocoded_count = 0
 filiere_count = 0
 niveau_count = 0
 
+nums = set()
 
 for stage in basics:
     n = None
     stage['confidentiel'] = False
     try:
         n = int(stage['num'])
+        if n in nums:
+            stage['to_delete'] = True
+            continue #skip duplicates
+        nums.add(n)
     except:
         stage['confidentiel'] = True
     if n in stages_dict:
@@ -197,6 +202,9 @@ for stage in basics:
 
     stage['semestre_annee'] = int(stage['semestre'][1:])
     stage['semestre_trimestre'] = stage['semestre'][0]
+
+basics = [x for x in basics if 'to_delete' not in x]
+
 
 print('geocoded',geocoded_count,"/",len(basics))
 print('filiere abbrev found',filiere_count,"/",len(basics))

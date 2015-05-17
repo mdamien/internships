@@ -6,37 +6,40 @@ namespace :app do
   task :import, [:file] => [:environment] do |t,args|
     file = args[:file]
 
+    puts "deleting previous internships"
     Internship.delete_all
 
-    #addresse,branche,branche_abbrev,city,company,confidentiel,country,description,done,etudiant,filiere,filiere_abbrev,lat,lng,niveau,niveau_abbrev,num,semestre,semestre_annee,semestre_trimestre,sujet,tuteur
-    CSV.foreach(file, :headers => true) do |row|
+    puts "loading csv"
 
-      if Internship.where(:id => row[16]).blank?
-        Internship.create({
-          address: row[0],
-          branch: row[1],
-          branch_abbreviation: row[2],
-          city: row[3],
-          company: row[4],
-          confidential: row[5] == "x" ? true : false,
-          country: row[6],
-          description: row[7],
-          done: row[8] == "x" ? true : false,
-          student: row[9],
-          filiere: row[10],
-          filiere_abbreviation: row[11],
-          latitude: row[12],
-          longitude: row[13],
-          level: row[14],
-          level_abbreviation: row[15],
-          id: row[16],
-          year: row[18],
-          semester: row[19],
-          subject: row[20],
-          teacher: row[21]
-        })
-      else
-        puts row[16].inspect
+    ActiveRecord::Base.transaction do
+      CSV.foreach(file,
+        :headers => true) do |row|
+
+          Internship.create({
+            address: row['addresse'],
+            branch: row['branche'],
+            branch_abbreviation: row['branche_abbrev'],
+            city: row['city'],
+            company: row['company'],
+            confidential: row['confidentiel'] == "x" ? true : false,
+            country: row['country'],
+            description: row['description'],
+            done: row['done'] == "x" ? true : false,
+            student: row['etudiant'],
+            filiere: row['filiere'],
+            filiere_abbreviation: row['filiere_abbrev'],
+            latitude: row['lat'],
+            longitude: row['lng'],
+            level: row['niveau'],
+            level_abbreviation: row['niveau_abbrev'],
+            id: row['num'],
+            year: row['semestre_annee'],
+            semester: row['semestre'],
+            subject: row['sujet'],
+            teacher: row['teacher']
+          })
+
+          if $. % 100 == 0 then puts $. end
       end
     end
   end
