@@ -1,8 +1,3 @@
-BUTS:
-VENDREDI: Interface minimal avec recherche (list+map) et graphs
-SAMEDI: Ajout CAS + kink out the big bugs
-DIMANCHE: Publier et ameliorer
-
 GOALS: Easy interactions and search through the internships subjets
 
 ##########################
@@ -23,12 +18,6 @@ SOLUTION
 #########
 Simple API for search and graphs
 => React components ingesting the data
-
-
-Start with map!
-Then graphs!
-Then search engine!
-
 
 Map
 #############
