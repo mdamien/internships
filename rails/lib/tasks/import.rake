@@ -11,10 +11,11 @@ namespace :app do
 
     puts "loading csv"
 
-    ActiveRecord::Base.transaction do
+    #ActiveRecord::Base.transaction do
       CSV.foreach(file,
         :headers => true) do |row|
 
+	begin
           Internship.create({
             address: row['addresse'],
             branch: row['branche'],
@@ -38,12 +39,16 @@ namespace :app do
             subject: row['sujet'],
             teacher: row['teacher']
           })
+	rescue
+	 puts "Error inserting this:"
+	 puts row
+	end
 
           if $. % 100 == 0 then
             puts $.
           end
       end
-    end
+    #end
   end
 
   task :import_fake_data, [:file] => [:environment] do |t,args|
