@@ -15,4 +15,4 @@
 //= require turbolinks
 //= require_tree .
 //= require bootstrap.min
-//= require typeahead.min
+//= require leaflet.markercluser

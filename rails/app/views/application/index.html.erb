@@ -1,7 +1,3 @@
-<h3>Bienvenue sur l'interface de consultation des stages effectués à l'UTC.</h3>
-<p>Commencez par utiliser le formulaire ci-dessous pour rechercher les types de stages qui vous intéressent.</p>
-<p>Vous pouvez ensuite utiliser les filtres mis à votre disposition en dessous de chaque titre de colonne dans le tableau pour filtrer les stages dynamiquement.</p>
-
 <!-- Internship dates and branch form. -->
 <div class="row well">
   <%= form_tag("/", method: "get", class: "form-inline") do %>
@@ -33,6 +29,7 @@
   <!-- Table containing internships. -->
   <div class="col-md-9">
     <% if !@internships.nil? and @internships.any? %>
+    <% if !params[:map] %>
     <table class="table table-condensed table-hover">
       <thead>
       <tr>
@@ -61,6 +58,44 @@
           </tr>
       <% end %>
     </table>
+    <% else %>
+
+<div id="map" style="height:500px;width:100%"></div>
+<script>
+var DATA = [];
+
+var map = L.map(document.getElementById('map'), {
+    minZoom: 2,
+    maxZoom: 20,
+    layers: [
+        L.tileLayer(
+            'https://{s}.tiles.mapbox.com/v4/powershops.k9bpc33d/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoicG93ZXJzaG9wcyIsImEiOiJhYUdRR0t3In0.oTz8RJqED2YEcDRfJYNAOQ',
+            {attribution: ''})
+    ],
+    attributionControl: false,
+});
+
+var markers = L.markerClusterGroup({});
+var count_bad = 0,count_good = 0;
+DATA.forEach(function(x){
+    if(x.lat == null){
+        count_bad += 1;
+    }else{
+        var title = "<a href='"+x.url+"'>"+x.sujet+"</a>"+x.addresse;
+        var m = L.marker(L.latLng(x.lat, x.lng))
+            .bindPopup(title);
+        markers.addLayer(m);
+        count_good += 1
+    }
+});
+map.addLayer(markers);
+
+map.fitWorld();
+</script>
+<hr/>
+
+
+    <% end %>
     <% else %>
         <div class="alert alert-dismissible alert-danger">
           <button type="button" class="close" data-dismiss="alert">×</button>
