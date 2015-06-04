@@ -1,0 +1,10 @@
+SEARCH
+- autocomplete
+- true index
+- filters
+- pagination
+- affix
+- map affix
+CAS
+STATS
+- pre-defined graphs to explore

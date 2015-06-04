@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Recherche{% endblock %}
+
+{% block extra_head %}
+{% if show_map %}
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
+    <script type="text/javascript" src='{% static "libs/jq.js" %}'></script> 
+
+    <link rel="stylesheet" href="{% static 'libs/MarkerCluster.css' %}" />
+    <link rel="stylesheet" href="{% static 'libs/MarkerCluster.Default.css' %}" />
+    <script src="{% static 'libs/leaflet.markercluster-src.js' %}"></script>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+    <form method="get" action="." class="form-inline form well">
+        <input class="form-control" name="q" type="text"
+          placeholder="Tapez votre recherche..." value="{{request.GET.q}}"/>
+        &nbsp;&nbsp;
+      <label for="niveau">Type</label>
+      <select name="niveau" class="form-control" ref="type">
+      {% for value,label in choices.niveau %}
+        <option value="{{value}}"
+          {% if request.GET.niveau == value %}selected{% endif %}
+        >{{label}}</option>
+      {% endfor %}
+      </select>
+      &nbsp;&nbsp;
+      <label for="branche">Branche</label>
+      <select name="branche" class="form-control">
+        {% for value,label in choices.branche %}
+          <option value="{{value}}"
+          {% if request.GET.branche == value %}selected{% endif %}
+          >{{label}}</option>
+        {% endfor %}
+      </select>
+      &nbsp;&nbsp;
+      <label for="from">De</label>
+      <select name="from" class="form-control">
+      {% for value,label in choices.semestre %}
+          <option value="{{value}}" 
+            {% if request.GET.from == value %}selected{% endif %}
+          >{{label}}</option>
+      {% endfor %}
+      </select>
+      <label for="to">&nbsp;&nbsp;&nbsp;à</label>
+      <select name="to" class="form-control">
+      {% for value,label in choices.semestre reversed %}
+          <option value="{{value}}"
+            {% if request.GET.to == value %}selected{% endif %}
+          >{{label}}</option>
+      {% endfor %}
+      </select>
+      &nbsp;&nbsp;
+      <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <input type="checkbox" name="not_taken" class="checkbox"
+            {% if 'not_taken' in request.GET %}checked{% endif %} /> Afficher sujets non pris
+        </label>
+      &nbsp;&nbsp;
+      <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <input type="checkbox" name="map" class="checkbox"
+            {% if 'map' in request.GET %}checked{% endif %} /> Afficher sur une carte
+        </label>
+      &nbsp;&nbsp;
+      <input type="submit" class="btn btn-primary" value="Rechercher">
+    </form>
+
+    <strong>{{ nb_results }} résultats</strong>
+    {% if show_map %}
+      {% include 'stages/search_map.html' %}
+    {% else %}
+      {% include 'stages/search_list.html' %}
+    {% endif %}
+{% endblock %}
