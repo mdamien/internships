@@ -1,0 +1,40 @@
+<table class="table table-condensed table-hover table-striped">
+<thead>
+<tr>
+    <th class="col-md-1"></th>
+    <th class="col-md-4">Sujet</th>
+    <th class="col-md-3">Entreprise</th>
+    <th class="col-md-3">Addresse</th>
+</tr>
+</thead>
+<tbody>
+    {% for stage in results %}
+    <tr>
+        <td>
+        {% if stage.done %}
+        <span className="glyphicon glyphicon-warning-sign" aria-hidden="true"
+                    title="Sujet non pris"></span>
+        {% endif %}
+        {% if stage.confidentiel %}
+        <span className="glyphicon glyphicon-eye-close" aria-hidden="true"
+                title="Sujet confidentiel"></span>
+        {% endif %}
+            {{stage.semestre}}{{stage.semestre_annee}}
+            {{stage.niveau_abbrev}}
+            {{stage.branche_abbrev}}
+        </td>
+        <td>
+            <a href="{{ stage.get_absolute_url }}">
+                {{stage.sujet}}
+            </a>
+        </td>
+        <td>
+        {% if 'apple' in stage.entreprise.lower %}
+        <span className="glyphicon glyphicon-apple"></span>
+        {% endif %}
+        <b>{{stage.entreprise}}</b></td>
+        <td>{{stage.ville}} {{stage.pays}}</td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
