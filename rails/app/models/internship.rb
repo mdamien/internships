@@ -34,6 +34,7 @@ class Internship < ActiveRecord::Base
                .to_semester(to_year, to_semester)
   end
 
+  # Order the internships in a specific order used in the table view on the homepage.
   def self.order_internships_for_table
     return order(year: :DESC)
            .order(semester: :ASC)
@@ -65,7 +66,9 @@ class Internship < ActiveRecord::Base
     return most_recent_internships
   end
 
-
+  # Return an array containing for each semester and branch a count of internships found in DB.
+  # @param query[Hash] Query containing all the filter attributes. Manage to_semester, from_semester, confidential_only, include_not_done, company_like, country_like, city_like, filiere_like, done_only, branch_like, level_like parameters.
+  # @return [Hash<Array, Integer>] Item format example: [2010, "P", "GI"]: 53
   def self.internship_count_by_semester query
     internships = search(query)
 
@@ -80,17 +83,17 @@ class Internship < ActiveRecord::Base
     return internships
   end
 
-  # @return [Internship] Each internship has a year property. Internships are ordered by year.
+  # @return [Array<Internship>] Each internship has a year property. Internships are ordered by year.
   def self.all_internship_years
     return select(:year).distinct.order(year: :ASC)
   end
 
-  # @return [Internship] Each internship has a branch_abbreviation property. Internships are ordered by branch_abbreviation ASC.
+  # @return [Array<Internship>] Each internship has a branch_abbreviation property. Internships are ordered by branch_abbreviation ASC.
   def self.all_branches
     return select(:branch_abbreviation).branch_not_empty.distinct.order(branch_abbreviation: :ASC)
   end
 
-  # @return [String] Array of all branch abbreviations ordered by branch abbreviation ASC.
+  # @return [Array<String>] Array of all branch abbreviations ordered by branch abbreviation ASC.
   def self.all_branches_for_select
     return self.all_branches.map { |b| b.branch_abbreviation }
   end
