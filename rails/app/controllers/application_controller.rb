@@ -11,6 +11,17 @@ class ApplicationController < ActionController::Base
 
     # Retrieving most recent year data from database by default.
     @internships = Internship.search(params).order_internships_for_table
+    @internships_geolocalized = @internships.map {
+        |i| {
+          company: i.company,
+          subject: i.subject,
+          address: i.address,
+          latitude: i.latitude,
+          longitude: i.longitude,
+          id: i.id,
+          url: url_for(controller: 'application', action: 'view', id: i.id)
+      }
+    }
 
     # Internship data values in JSON (countries, cities, companies).
     # These Sets are used so store autocomplete values in the table.

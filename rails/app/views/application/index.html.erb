@@ -1,5 +1,5 @@
 <!-- Internship dates and branch form. -->
-<div class="row well">
+<div id="form-div" class="row well">
   <%= form_tag("/", method: "get", class: "form-inline") do %>
       <div class="form-group col-md-2">
         <%= label_tag(:from_semester, "De", style: "margin-right: 5px;") %>
@@ -29,8 +29,7 @@
   <!-- Table containing internships. -->
   <div class="col-md-9">
     <% if !@internships.nil? and @internships.any? %>
-    <% if !params[:map] %>
-    <table class="table table-condensed table-hover">
+    <table class="table-data table table-condensed table-hover">
       <thead>
       <tr>
         <th>Sem.</th>
@@ -58,11 +57,12 @@
           </tr>
       <% end %>
     </table>
+
+    <!-- Map div, hidden by default. -->
+    <div id="map" style="height: 500px; width: 100%; display: none;"></div>
+
     <% else %>
-        <div id="map" style="height:500px;width:100%"></div>
-    <% end %>
-    <% else %>
-        <div class="alert alert-dismissible alert-danger">
+        <div class="table-data alert alert-dismissible alert-danger">
           <button type="button" class="close" data-dismiss="alert">×</button>
           <h4>Pas de résultat.</h4>
           <p>Aucune entrée ne correspond aux critères de recherche.</p>
@@ -72,6 +72,10 @@
 
   <!-- Panel displaying info of the selected internship. Only visible on large screen devices. -->
   <div class="col-md-3 visible-md visible-lg" id="panel-container">
+    <div style="padding-bottom: 40px;">
+        <button class="col-xs-6 btn btn-primary btn-sm view-button-selector">Liste</button>
+        <button class="col-xs-6 btn btn-default btn-sm view-button-selector">Carte</button>
+    </div>
     <div class="panel panel-success" data-spy="affix" data-offset-top="80" id="internship-info">
       <div class="panel-heading">
         <h3 class="panel-title">Sujet</h3>
@@ -86,31 +90,62 @@
 <script type="text/javascript">
 $(document).ready(function() {
     var $internshipInfoPanel = $('#internship-info');
+    var $map = $('#map');
+    var $table = $('.table-data');
 
-    function resizeInternshipPanelInformation() {
+    var $buttonViewSelectors = $('.view-button-selector');
+
+    // If user changed of view by clicking a button, toggle button view selectors classes and display the other view.
+    $buttonViewSelectors.on('click', function() {
+        if (!$(this).hasClass('btn-primary')) {
+            $buttonViewSelectors.toggleClass('btn-primary');
+            $buttonViewSelectors.toggleClass('btn-default');
+
+            toggleTableMapDisplay();
+        }
+    });
+
+    function toggleTableMapDisplay() {
+        $table.toggle();
+        $map.toggle();
+
+        resizeElements();
+    };
+
+    function resizeElements() {
         $internshipInfoPanel.width($internshipInfoPanel.parent().width());
+
+        if ($map.css('display') !== 'none') {
+            $map.height($(window).height() - $('#form-div').height() - $('.navbar').height() - 70);
+            $map.invalidateSize(true);
+        }
     }
 
     //Setting panel size when page is loaded.
-    resizeInternshipPanelInformation();
+    resizeElements();
 
     //Resizing panel width when size of the window changes.
     $(window).resize(function () {
-        resizeInternshipPanelInformation();
+        resizeElements();
     });
 
-    $('tr[internship-id]').click(function(){
-        var id = $(this).attr('internship-id');
-
+    // Change right panel content when user clicks on a table row or a map marker.
+    // Display information of the given internship id.
+    updateRightPanelInformation = function (internshipId) {
         //Retrieving data of the clicked row
         $.ajax({
-            url: "/internships/" + id,
+            url: "/internships/" + internshipId,
             type: "GET",
             dataType: "json"
         }).done(function(data){
-            $internshipInfoPanel.find('.panel-title').text(data.subject)
+            $internshipInfoPanel.find('.panel-title').text(data.subject);
             updateInfoPanelContents(data);
         });
+    };
+
+    $('tr[internship-id]').click(function(){
+        var id = $(this).attr('internship-id');
+        updateRightPanelInformation(id);
     });
 
     /*
@@ -216,7 +251,7 @@ $(document).ready(function() {
 $(document).ready(function() {
 
     // Array of markers.
-    var dataMarkers = [];
+    var dataMarkers = <%= @internships_geolocalized.to_json.html_safe %>;
 
     var map = L.map(document.getElementById('map'), {
         minZoom: 2,
@@ -232,13 +267,20 @@ $(document).ready(function() {
     var markers = L.markerClusterGroup({});
     var count_bad = 0, count_good = 0;
     dataMarkers.forEach(function (m) {
-        if (m.lat == null) {
+        if (m.latitude == null) {
             count_bad ++;
         }
         else {
-            var title = "<a href='" + m.url + "'>" + m.sujet + "</a>" + m.addresse;
-            var marker = L.marker(L.latLng(m.lat, m.lng))
-                    .bindPopup(title);
+            var title = "<strong>" + m.company + "</strong>" + "<br/>";
+            title += "<a href=\"" + m.url + "\">" + m.subject + "</a>" + "<br/>" + m.address;
+            var marker = L.marker(L.latLng(m.latitude, m.longitude), {
+                'id': m.id
+            });
+            marker.bindPopup(title);
+            marker.on('click', function(e) {
+                updateRightPanelInformation(e.target.options.id);
+            });
+
             markers.addLayer(marker);
             count_good ++;
         }

@@ -1,5 +1,11 @@
+<strong>Entreprise</strong>
+<p><%= internship.company %></p>
 <strong>Branche</strong>
-<p><%= internship.branch_abbreviation %><%= " (" + internship.filiere + ")" if internship.filiere.present? %></p>
+<p>
+  <%= internship.branch_abbreviation %><%= " (" + internship.filiere + ")" if internship.filiere.present? %>
+</p>
+<strong>Stage</strong>
+<p><%= internship.level_abbreviation %>, <%= internship.semester %><%= internship.year %></p>
 <strong>Étudiant</strong>
 <p><%= internship.student %></p>
 <strong>Descriptif</strong>

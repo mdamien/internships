@@ -98,6 +98,8 @@ class Internship < ActiveRecord::Base
     return self.all_branches.map { |b| b.branch_abbreviation }
   end
 
+  # Return all filiere abbreviations in the database, grouped by branch in a Hash. Hash keys are ordered by branch abbreviation.
+  # @return [Hash<String, Array>] Item format example: "GI": ["FDD", "ICSI"]
   def self.all_filieres
     # Grouping and having because some students from branches took filieres from other branches (very rare, so having count > 5 is enough to make sure we select only actual branch filieres)
     filieres =  select(:branch_abbreviation)
