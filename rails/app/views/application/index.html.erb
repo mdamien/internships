@@ -215,7 +215,8 @@ $(document).ready(function() {
 <script type="text/javascript">
 $(document).ready(function() {
 
-    var DATA = [];
+    // Array of markers.
+    var dataMarkers = [];
 
     var map = L.map(document.getElementById('map'), {
         minZoom: 2,
@@ -230,15 +231,16 @@ $(document).ready(function() {
 
     var markers = L.markerClusterGroup({});
     var count_bad = 0, count_good = 0;
-    DATA.forEach(function (x) {
-        if (x.lat == null) {
-            count_bad += 1;
-        } else {
-            var title = "<a href='" + x.url + "'>" + x.sujet + "</a>" + x.addresse;
-            var m = L.marker(L.latLng(x.lat, x.lng))
+    dataMarkers.forEach(function (m) {
+        if (m.lat == null) {
+            count_bad ++;
+        }
+        else {
+            var title = "<a href='" + m.url + "'>" + m.sujet + "</a>" + m.addresse;
+            var marker = L.marker(L.latLng(m.lat, m.lng))
                     .bindPopup(title);
-            markers.addLayer(m);
-            count_good += 1
+            markers.addLayer(marker);
+            count_good ++;
         }
     });
     map.addLayer(markers);
