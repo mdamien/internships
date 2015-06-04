@@ -9,23 +9,26 @@ class ApplicationController < ActionController::Base
     @all_levels = Internship.all_levels_for_select
     @all_branches = Internship.all_branches_for_select
 
-    #Retrieving most recent year data from database by default
+    # Retrieving most recent year data from database by default.
     @internships = Internship.search(params).order_internships_for_table
 
-    #Internship data values in JSON (countries, cities, companies)
+    # Internship data values in JSON (countries, cities, companies).
+    # These Sets are used so store autocomplete values in the table.
     @internship_data_json = {
         "countries" => SortedSet.new,
         "cities" => SortedSet.new,
         "companies" => SortedSet.new
     }
 
+    # Filling sets with data.
     @internships.each do |i|
       @internship_data_json["countries"].add(i.country.titleize) unless i.country.nil?
       @internship_data_json["cities"].add(i.city.titleize) unless i.city.nil?
       @internship_data_json["companies"].add(i.company.titleize) unless i.company.nil?
     end
   end
-  
+
+  # View of a single internship when clicking on it in the table/map.
   def view
     @internship = Internship.find(params[:id])
   end
@@ -36,11 +39,11 @@ class ApplicationController < ActionController::Base
 
   protected
 
-  #Default search parameters.
+  # Default search parameters.
   def set_search_query
     @all_semesters = Internship.all_semesters_ordered
 
-    # Adding missing parameters by default
+    # Adding missing parameters by default.
     params[:from_semester] ||= @all_semesters.size > 1 ? @all_semesters[1] : @all_semesters.first()
     params[:to_semester] ||= @all_semesters.first()
   end

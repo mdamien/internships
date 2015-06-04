@@ -14,11 +14,14 @@ class Internship < ActiveRecord::Base
   scope :confidential_only, -> { where("confidential = 't'") }
   scope :exclude_not_done, -> { where("done = 't'") }
   scope :company_equal, -> (company) { where("company = ?", + company) }
+  scope :branch_not_empty, -> { where.not(branch_abbreviation: '') }
 
   scope :order_by_semester_desc, -> { order(year: :DESC).order(semester: :ASC) }
   scope :order_by_semester_asc, -> { order(year: :ASC).order(semester: :DESC) }
 
-  # from_s and to_s have to be "A2015" for instance.
+  # Limit the internship retrieval period between two given semesters.
+  # @param from_s[String] Semester from which internships will be retrieved. Format example : "A2015".
+  # @param to_s[String] Semester up to which internships will be retrieved. Format example : "A2015".
   def self.from_semester_to_semester(from_s, to_s)
     from_year = from_s[1..4].to_i
     to_year = to_s[1..4].to_i
@@ -31,6 +34,7 @@ class Internship < ActiveRecord::Base
                .to_semester(to_year, to_semester)
   end
 
+  # Order the internships in a specific order used in the table view on the homepage.
   def self.order_internships_for_table
     return order(year: :DESC)
            .order(semester: :ASC)
@@ -38,17 +42,21 @@ class Internship < ActiveRecord::Base
            .order(company: :ASC)
   end
 
+  # Return internship from the most recent year.
   def self.most_recent_internships
     most_recent_year = Internship.maximum("year")
     return Internship.from_year(most_recent_year)
   end
 
+  # Return an array of internships based on a search query.
+  # @param query[Hash] Query containing all the filter attributes. Manage to_semester, from_semester, confidential_only, include_not_done, company_like, country_like, city_like, filiere_like, done_only, branch_like, level_like parameters.
   def self.search query
     if query.has_key?(:from_semester) && query.has_key?(:to_semester)
-
       internships = from_semester_to_semester(query[:from_semester], query[:to_semester])
       internships = internships.confidential_only if query[:confidential_only].present?
       internships = internships.exclude_not_done unless query[:include_not_done].present?
+
+      # Filtering internships with query parameters values.
       internships = internships.filter(query.slice(:company_like, :country_like, :city_like, :filiere_like, :done_only, :branch_like, :level_like))
 
       return internships
@@ -58,10 +66,14 @@ class Internship < ActiveRecord::Base
     return most_recent_internships
   end
 
+  # Return an array containing for each semester and branch a count of internships found in DB.
+  # @param query[Hash] Query containing all the filter attributes. Manage to_semester, from_semester, confidential_only, include_not_done, company_like, country_like, city_like, filiere_like, done_only, branch_like, level_like parameters.
+  # @return [Hash<Array, Integer>] Item format example: [2010, "P", "GI"]: 53
   def self.internship_count_by_semester query
     internships = search(query)
 
     internships = internships
+                      .branch_not_empty
                       .group("year")
                       .group("semester")
                       .group("branch_abbreviation")
@@ -71,14 +83,17 @@ class Internship < ActiveRecord::Base
     return internships
   end
 
+  # @return [Array<Internship>] Each internship has a year property. Internships are ordered by year.
   def self.all_internship_years
     return select(:year).distinct.order(year: :ASC)
   end
 
+  # @return [Array<Internship>] Each internship has a branch_abbreviation property. Internships are ordered by branch_abbreviation ASC.
   def self.all_branches
-    return select(:branch_abbreviation).where.not(branch_abbreviation: '').distinct.order(branch_abbreviation: :ASC)
+    return select(:branch_abbreviation).branch_not_empty.distinct.order(branch_abbreviation: :ASC)
   end
 
+  # @return [Array<String>] Array of all branch abbreviations ordered by branch abbreviation ASC.
   def self.all_branches_for_select
     return self.all_branches.map { |b| b.branch_abbreviation }
   end
@@ -87,7 +102,7 @@ class Internship < ActiveRecord::Base
     # Grouping and having because some students from branches took filieres from other branches (very rare, so having count > 5 is enough to make sure we select only actual branch filieres)
     filieres =  select(:branch_abbreviation)
                     .select(:filiere_abbreviation)
-                    .where.not(branch_abbreviation: '')
+                    .branch_not_empty
                     .where.not(filiere_abbreviation: '')
                     .group(:branch_abbreviation)
                     .group(:filiere_abbreviation)
@@ -96,7 +111,10 @@ class Internship < ActiveRecord::Base
                     .order(filiere_abbreviation: :ASC)
                     .having("COUNT (*) > 5")
 
-    filieres_data = Hash.new
+    # Filieres that any student from any branch can choose.
+    filieres_data = {
+        "Transversales" => ["Libre", "MPI"]
+    }
 
     filieres.each do |f|
       if filieres_data.has_key?(f.branch_abbreviation)

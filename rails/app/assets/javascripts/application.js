@@ -13,6 +13,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
-//= require_tree .
 //= require bootstrap.min
-//= require leaflet.markercluser
+//= require leaflet.js.erb
+//= require leaflet/leaflet.markercluster
+//= require_tree .

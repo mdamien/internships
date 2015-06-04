@@ -13,8 +13,11 @@
  *= require_tree .
  *= require_self
  *= require bootstrap_paper
- *= require MarkerCluster
- *= require MarkerCluster.Default
+ *= require leaflet
+ *= depend_on_asset "layers.png"
+ *= depend_on_asset "layers-2x.png"
+ *= require Leaflet/MarkerCluster.css
+ *= require Leaflet/MarkerCluster.Default.css
  */
 
 html {
