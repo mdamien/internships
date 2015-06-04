@@ -52,6 +52,7 @@ chartCountPerSemester = function($data) {
                 }
             }
         },
+        colors: colorsFromData($data),
         series: seriesFromData($data)
     });
 };

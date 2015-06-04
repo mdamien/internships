@@ -14,6 +14,7 @@ class Internship < ActiveRecord::Base
   scope :confidential_only, -> { where("confidential = 't'") }
   scope :exclude_not_done, -> { where("done = 't'") }
   scope :company_equal, -> (company) { where("company = ?", + company) }
+  scope :branch_not_empty, -> { where.not(branch_abbreviation: '') }
 
   scope :order_by_semester_desc, -> { order(year: :DESC).order(semester: :ASC) }
   scope :order_by_semester_asc, -> { order(year: :ASC).order(semester: :DESC) }
@@ -62,6 +63,7 @@ class Internship < ActiveRecord::Base
     internships = search(query)
 
     internships = internships
+                      .branch_not_empty
                       .group("year")
                       .group("semester")
                       .group("branch_abbreviation")
@@ -76,7 +78,7 @@ class Internship < ActiveRecord::Base
   end
 
   def self.all_branches
-    return select(:branch_abbreviation).where.not(branch_abbreviation: '').distinct.order(branch_abbreviation: :ASC)
+    return select(:branch_abbreviation).branch_not_empty.distinct.order(branch_abbreviation: :ASC)
   end
 
   def self.all_branches_for_select
@@ -87,7 +89,7 @@ class Internship < ActiveRecord::Base
     # Grouping and having because some students from branches took filieres from other branches (very rare, so having count > 5 is enough to make sure we select only actual branch filieres)
     filieres =  select(:branch_abbreviation)
                     .select(:filiere_abbreviation)
-                    .where.not(branch_abbreviation: '')
+                    .branch_not_empty
                     .where.not(filiere_abbreviation: '')
                     .group(:branch_abbreviation)
                     .group(:filiere_abbreviation)
@@ -96,7 +98,10 @@ class Internship < ActiveRecord::Base
                     .order(filiere_abbreviation: :ASC)
                     .having("COUNT (*) > 5")
 
-    filieres_data = Hash.new
+    # Filieres that any student from any branch can choose.
+    filieres_data = {
+        "Transversales" => ["Libre", "MPI"]
+    }
 
     filieres.each do |f|
       if filieres_data.has_key?(f.branch_abbreviation)

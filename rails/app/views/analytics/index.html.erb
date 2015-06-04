@@ -134,6 +134,29 @@
             return $countBySeries;
         };
 
+        var $colors = {
+            'GI': '#7cb5ec', // Light blue.
+            'GB': '#f45b5b', // Red.
+            'GM': '#2b908f',
+            'GSM': '#434348',  // Black.
+            'GSU': '#D3D3D3', //Light gray
+            'GP': '#90ed7d',  // Green.
+            'Master': '#8085e9', // Purple.
+            'HuTech': '#e4d354', // Yellow.
+            'TC': '#f7a35c', // Orange.
+            'Licence Pro': '#f15c80'  // Pink.
+        };
+
+        colorsFromData = function ($data) {
+            $graphColors = [];
+            $series = seriesFromData($data);
+            for(i = 0; i < $series.length; i++ ) {
+                $graphColors.push($colors[$series[i].name]);
+            }
+
+            return $graphColors;
+        };
+
         $('input[data-provide="typeahead"]').each(function() {
             var $this = $(this);
 
@@ -148,15 +171,20 @@
             });
         });
 
+        $branch_select = $('#branch_like');
+        $filiere_select = $('#filiere_like');
+
         // Manage branch and filiere changes.
-        $('#branch_like').on('change', function () {
-            $('#filiere_like').val(null);
+        $branch_select.on('change', function () {
+            $filiere_select.val(null);
         });
 
-        $('#filiere_like').on('change', function () {
+        $filiere_select.on('change', function () {
             var branch = $(':selected', this).parent().attr('label');
-            if (branch != null)
-                $('#branch_like').val(branch);
+
+            // Selecting branch associated to filiere if any.
+            if ($branch_select.find('option[value="' + branch + '"]').length > 0)
+                $branch_select.val(branch);
         });
 
         <% if current_page?(controller: 'analytics', action: 'index') %>
@@ -168,7 +196,6 @@
             chartTopCompanies($companies_data, $top_companies_total_count);
         <% end %>
 
-
         $("#analytics-form").on("submit", function(event) {
             event.preventDefault();
             $.ajax({
@@ -178,7 +205,6 @@
                 success: function(data) {
                     <% if current_page?(controller: 'analytics', action: 'index') %>
                         $data_internships = data.data_internships;
-                        console.debug(data.data_internships);
                         chartCountPerSemester($data_internships);
                     <% elsif current_page?(controller: 'analytics', action: 'top_companies') %>
                         $companies_data = data.top_companies;

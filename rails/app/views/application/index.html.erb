@@ -170,15 +170,22 @@ $(document).ready(function() {
     }
 
     // Manage branch and filiere changes.
-    $('#branch_like').on('change', function () {
-        $('#filiere_like').val(null);
+    $branch_select = $('#branch_like');
+    $filiere_select = $('#filiere_like');
+
+    // Manage branch and filiere changes.
+    $branch_select.on('change', function () {
+        $filiere_select.val(null);
     });
 
-    $('#filiere_like').on('change', function () {
+    $filiere_select.on('change', function () {
         var branch = $(':selected', this).parent().attr('label');
-        if (branch != null)
-            $('#branch_like').val(branch);
+
+        // Selecting branch associated to filiere if any.
+        if ($branch_select.find('option[value="' + branch + '"]').length > 0)
+            $branch_select.val(branch);
     });
+
 
     $internship_data = <%= @internship_data_json.to_json.html_safe %>;
 
