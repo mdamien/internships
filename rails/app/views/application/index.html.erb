@@ -105,6 +105,7 @@ $(document).ready(function() {
         }
     });
 
+    // If map is visible, hide it and show the table. Else, do the opposite.
     function toggleTableMapDisplay() {
         $table.toggle();
         $map.toggle();
@@ -112,12 +113,14 @@ $(document).ready(function() {
         resizeElements();
     };
 
+    // Resize map and panel.
     function resizeElements() {
         $internshipInfoPanel.width($internshipInfoPanel.parent().width());
 
         if ($map.css('display') !== 'none') {
             $map.height($(window).height() - $('#form-div').height() - $('.navbar').height() - 70);
-            $map.invalidateSize(true);
+            // Redraw map when map height changes.
+            invalidateMapSize();
         }
     }
 
@@ -250,43 +253,57 @@ $(document).ready(function() {
 <script type="text/javascript">
 $(document).ready(function() {
 
-    // Array of markers.
-    var dataMarkers = <%= @internships_geolocalized.to_json.html_safe %>;
-
-    var map = L.map(document.getElementById('map'), {
-        minZoom: 2,
-        maxZoom: 20,
-        layers: [
-            L.tileLayer(
-                    'https://{s}.tiles.mapbox.com/v4/powershops.k9bpc33d/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoicG93ZXJzaG9wcyIsImEiOiJhYUdRR0t3In0.oTz8RJqED2YEcDRfJYNAOQ',
-                    {attribution: ''})
-        ],
-        attributionControl: false
-    });
-
-    var markers = L.markerClusterGroup({});
-    var count_bad = 0, count_good = 0;
-    dataMarkers.forEach(function (m) {
-        if (m.latitude == null) {
-            count_bad ++;
+    invalidateMapSize = function() {
+        if(map != null) {
+            // Map already exists.
+            map.invalidateSize();
         }
         else {
-            var title = "<strong>" + m.company + "</strong>" + "<br/>";
-            title += "<a href=\"" + m.url + "\">" + m.subject + "</a>" + "<br/>" + m.address;
-            var marker = L.marker(L.latLng(m.latitude, m.longitude), {
-                'id': m.id
-            });
-            marker.bindPopup(title);
-            marker.on('click', function(e) {
-                updateRightPanelInformation(e.target.options.id);
-            });
-
-            markers.addLayer(marker);
-            count_good ++;
+            // Drawing map if does not exist. (Will not draw map if user does not want to see it to save memory.
+            drawMap();
         }
-    });
-    map.addLayer(markers);
+    };
 
-    map.fitWorld();
+    // Array of markers.
+    var dataMarkers = <%= @internships_geolocalized.to_json.html_safe %>;
+    var map = null;
+    var markers = L.markerClusterGroup({});
+    var count_bad = 0, count_good = 0;
+
+    drawMap = function() {
+        map = L.map(document.getElementById('map'), {
+            minZoom: 2,
+            maxZoom: 18,
+            layers: [
+                L.tileLayer(
+                        'https://{s}.tiles.mapbox.com/v4/powershops.k9bpc33d/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoicG93ZXJzaG9wcyIsImEiOiJhYUdRR0t3In0.oTz8RJqED2YEcDRfJYNAOQ',
+                        {attribution: ''})
+            ],
+            attributionControl: false
+        });
+
+        dataMarkers.forEach(function (m) {
+            if (m.latitude == null) {
+                count_bad ++;
+            }
+            else {
+                var title = "<strong>" + m.company + "</strong>" + "<br/>";
+                title += "<a href=\"" + m.url + "\">" + m.subject + "</a>" + "<br/>" + m.address;
+                var marker = L.marker(L.latLng(m.latitude, m.longitude), {
+                    'id': m.id
+                });
+                marker.bindPopup(title);
+                marker.on('click', function(e) {
+                    updateRightPanelInformation(e.target.options.id);
+                });
+
+                markers.addLayer(marker);
+                count_good ++;
+            }
+        });
+        map.addLayer(markers);
+
+        map.fitWorld();
+    }
 });
 </script>
